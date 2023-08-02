@@ -1,4 +1,4 @@
-import { StyleSheet, Image, Text, View, ScrollView, TouchableOpacity, Button } from 'react-native';
+import { StyleSheet, Image, Text, View, ScrollView, TouchableOpacity, } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -32,7 +32,8 @@ const FirstLoadScreen = () => {
     // Load the custom font
     async function loadFont() {
       await Font.loadAsync({
-        'CustomFont': require('./assets/one.ttf'), // Replace with the actual path to your custom font file
+        'CustomFont': require('./assets/one.ttf'),
+        'AnotherCustomFont': require('./assets/two.ttf'), // Replace with the actual path to your custom font file
       });
       setIsLoading(false); // Set isLoading to false after the font is loaded
     }
@@ -79,7 +80,7 @@ const Disclaimer = ({ navigation }) => {
       <Text style={styles.Para4}>This app will not teach you how to box!</Text> 
       <Text style={styles.Para5}>You can use this app without a punching bag, however you will get the best experience with one.</Text> 
       <Text style={styles.Para6}>You should warm up, stretch, wear hand wraps and boxing gloves!</Text> 
-      <Text style={styles.Para7}>Stix&Stones Productions <Text style={styles.Red}>accepts no responsibility</Text> for any harm caused to the user, equipment, or those around the user while using this app.</Text> 
+      <Text style={styles.Para7}>Stix&Stones Productions Ltd <Text style={styles.Red}>accepts no responsibility</Text> for any harm caused to the user, equipment, or those around the user before, during or after the use of this app.</Text> 
       <Text style={styles.Para8}>By entering the app you agree to these terms!</Text> 
       <TouchableOpacity onPress={handleButtonPress}>
         <Image style={styles.button} source={require('./assets/donotpress.jpg')} />
@@ -96,7 +97,10 @@ const HomeScreen = () => {
   };
   const handleButtonPress1 = () => {
     navigation.navigate('Artists');
-  }
+  };
+  const handleButtonPress2 = () => {
+    navigation.navigate('Levels');
+  };
   return (
     <View style={styles.HomeScreen}>
       <Image source={require('./assets/pg3img1.jpg')} style={styles.home} />
@@ -107,7 +111,7 @@ const HomeScreen = () => {
       <Image source={require('./assets/artists.png')} style={styles.home4} resizeMode="contain"/>
       <TouchableOpacity onPress={handleButtonPress1}  style={styles.artAndLeveltext1}><Image source={require('./assets/artists1.png')} style={styles.home5} resizeMode="contain"/></TouchableOpacity>
       <Image source={require('./assets/levels.png')} style={styles.home6} resizeMode="contain"/>
-      <TouchableOpacity onPress={handleButtonPress} style={styles.artAndLeveltext1}><Image source={require('./assets/levels1.png')} style={styles.home7} resizeMode="contain"/></TouchableOpacity>
+      <TouchableOpacity onPress={handleButtonPress2} style={styles.artAndLeveltext1}><Image source={require('./assets/levels1.png')} style={styles.home7} resizeMode="contain"/></TouchableOpacity>
       
       </View>
     
@@ -151,16 +155,10 @@ const Instructions = () => {
     return (
       <View style={styles.HomeScreen}>
       <ScrollView>
-       <Image source={require('./assets/artists1.png')} style={styles.artistsWriting} resizeMode="contain"/>
+        <Text style={styles.artistsWriting} >Artists</Text>
        <TouchableOpacity style={styles.peterDobbins}  onPress={handleButtonPress} >
        <ImageWithShadow 
         imageSource={require('./assets/peter-dobbins.jpg')}
-        customStyles={{ width: 250, height: 250, borderRadius: 10, }}>
-        </ImageWithShadow>
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.tribalPulse}>
-          <ImageWithShadow imageSource={require('./assets/tp.jpg')}
         customStyles={{ width: 250, height: 250, borderRadius: 10, }}>
         </ImageWithShadow>
         </TouchableOpacity>
@@ -170,6 +168,36 @@ const Instructions = () => {
        
   
     )};
+
+    const Levels = () => {
+
+      const navigation = useNavigation();
+    const handleButtonPress = () => {
+      navigation.navigate('Ravin');
+    }
+      return (
+        <View style={styles.HomeScreen}>
+        <ScrollView>
+          <Text style={styles.levelsWriting} >Levels</Text>
+          
+          <Image source={require('./assets/yellow.png')} style={styles.level1} resizeMode="contain"/>
+      <TouchableOpacity onPress={handleButtonPress}  style={styles.easy}><Image source={require('./assets/easy.png')} style={styles.home5} resizeMode="contain"/></TouchableOpacity>
+      
+      <Image source={require('./assets/green.png')} style={styles.level2} resizeMode="contain"/>
+      <TouchableOpacity onPress={handleButtonPress}  style={styles.tough}><Image source={require('./assets/tough.png')} style={styles.home5} resizeMode="contain"/></TouchableOpacity>
+
+      <Image source={require('./assets/blue.png')} style={styles.level3} resizeMode="contain"/>
+      <TouchableOpacity onPress={handleButtonPress}  style={styles.smash}><Image source={require('./assets/smash.png')} style={styles.home5} resizeMode="contain"/></TouchableOpacity>
+
+
+
+         
+          
+            </ScrollView>
+        </View>
+         
+    
+      )};
 
     
 
@@ -272,6 +300,7 @@ const App = () => {
         <Stack.Screen name="Instructions" component={Instructions} />
         <Stack.Screen name="Artists" component={Artists} />
         <Stack.Screen name="Ravin" component={Ravin} />
+        <Stack.Screen name="Levels" component={Levels} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -456,7 +485,8 @@ touchHome: {
           color: "white",
           marginTop: 100,
           alignSelf: "center",
-          fontSize: 40,
+          fontSize: 50,
+          fontFamily: 'CustomFont',
           
           },
       
@@ -464,7 +494,8 @@ touchHome: {
           color: "white",
           marginTop: 100,
           alignSelf: "center",
-          fontSize: 30,
+          fontSize: 45,
+          fontFamily: 'AnotherCustomFont',
          
           },
       pt3: {
@@ -480,19 +511,8 @@ touchHome: {
           fontSize: 30,
           },
           
-// home button at the bottom and white splat
-      psyHouse: {
-        width: 110,
-        height: 110,
-        marginTop: -290,
-        alignSelf: "center",
-      },
-      whiteSplat: {
-        width: 300,
-        alignSelf: "center",
-        marginTop: -90,
 
-      },
+      
 
 // the Aritist and Levels writing (Went funny when trying to apply the touchable opcaity)
       
@@ -504,37 +524,26 @@ touchHome: {
 
       // this is for the Artists page
       
-      artistsWriting: {
-        width: 400,
-        marginTop: 40,
-        
-
-      },  
+     
       peterDobbins: {
         alignSelf: 'center',
-        marginTop: 40,
+        marginTop: 50,
+        height: 270,
         
         
-        
-        
-    
-         
-      },
+    },
+    artistsWriting: {
+      color: '#FFFFFF',
+      fontFamily: 'AnotherCustomFont',
+      fontSize: 150,
+      alignSelf: 'center',
+      marginTop: 80, 
+      
+    },
       
       
 
-      tribalPulse: {
-        
-        
-        alignSelf: 'center',
-        marginTop: 80,
-        marginBottom: 90,
-        
-        
-        
     
-
-      },
 
 
 // this is for the Ravin page, with my music!!
@@ -577,6 +586,65 @@ video: {
 
 
 },
+
+
+// for levels page 
+
+levelsWriting: {
+  color: '#FFFFFF',
+  fontFamily: 'AnotherCustomFont',
+  fontSize: 170,
+  alignSelf: 'center',
+  marginTop: 80, 
+  marginBottom: -100,
+  
+},
+
+level1: {
+  width: 300,
+    alignSelf: 'center',
+    marginBottom: -100,
+    
+
+},
+
+easy: {
+  width: '250%',
+  aspectRatio: 1,
+  alignSelf: 'center',
+  marginBottom: -1080,
+  },
+
+  level2: {
+    width: 300,
+      alignSelf: 'center',
+      marginBottom: -170,
+  
+  },
+
+  tough: {
+    width: '250%',
+    aspectRatio: 1,
+    alignSelf: 'center',
+    marginBottom: -1040,
+    },
+
+    smash: {
+      width: '390%',
+      aspectRatio: 1,
+      alignSelf: 'center',
+      marginTop: -200,
+      marginBottom: -1400,
+    
+      },
+
+      level3: {
+        width: 350,
+          alignSelf: 'center',
+         
+          
+      
+      },
 
 
       

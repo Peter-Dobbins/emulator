@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Image, StyleSheet } from 'react-native';
+import {Image, StyleSheet } from 'react-native';
 import { Shadow } from 'react-native-shadow-2';
 
 const ImageWithShadow = ({ imageSource, customStyles }) => {

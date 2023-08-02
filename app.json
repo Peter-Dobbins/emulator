@@ -27,9 +27,7 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "react-native-google-mobile-ads": {
-      "android_app_id": "ca-app-pub-4523446730560209~4507376866"
-    },
+    
     "extra": {
       "eas": {
         "projectId": "09e2397c-2eb5-47a6-8d3f-88f82e141102"

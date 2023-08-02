@@ -5,10 +5,9 @@ import { createStackNavigator } from '@react-navigation/stack';
 import * as Font from 'expo-font';
 import { LinearGradient } from 'expo-linear-gradient';
 import ImageWithShadow from './ImageWithShadow';
-import SoundPlayer from './SoundPlayer';
 import { Audio } from 'expo-av';
 import { Video, ResizeMode } from 'expo-av';
-import { ScreenOrientation } from 'expo-screen-orientation';
+
 
 
 

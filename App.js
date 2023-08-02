@@ -7,6 +7,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import ImageWithShadow from './ImageWithShadow';
 import { Audio } from 'expo-av';
 import { Video, ResizeMode } from 'expo-av';
+import { enableScreens } from 'react-native-screens';
 
 
 

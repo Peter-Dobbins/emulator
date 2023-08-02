@@ -6,13 +6,9 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "font": {
-      "name": "one",
-      "asset": "assets/one.ttf"
+    "assetBundlePatterns": ["assets/*"]
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "2"
@@ -34,4 +30,4 @@
       }
     }
   }
-}
+

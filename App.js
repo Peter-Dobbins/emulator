@@ -178,7 +178,7 @@ const Instructions = () => {
       return (
         <View style={styles.HomeScreen}>
         <ScrollView>
-          <Text style={styles.levelsWriting} >Levels</Text>
+          <Text style={styles.levelsWriting} >evels</Text>
           
           <Image source={require('./assets/yellow.png')} style={styles.level1} resizeMode="contain"/>
       <TouchableOpacity onPress={handleButtonPress}  style={styles.easy}><Image source={require('./assets/easy.png')} style={styles.home5} resizeMode="contain"/></TouchableOpacity>

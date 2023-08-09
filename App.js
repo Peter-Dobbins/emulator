@@ -1,4 +1,4 @@
-import { StyleSheet, Image, Text, View, ScrollView, TouchableOpacity } from 'react-native';
+import { StyleSheet, Image, Text, View, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -9,6 +9,7 @@ import { Audio } from 'expo-av';
 import { Video, ResizeMode } from 'expo-av';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomCheckBox from './CustomCheckBox';
+import { AdMobBanner } from 'expo-ads-admob';
 
 
 
@@ -38,6 +39,12 @@ const FirstLoadScreen = () => {
     return () => clearTimeout(timer); // Clear the timer if the component unmounts before the minimum loading time
   }, []);
 
+  useEffect(() => {
+    if (!isLoading) {
+      navigation.navigate('Disclaimer');
+    }
+  }, [isLoading]);
+
   if (isLoading) {
     return (
       <View>
@@ -46,9 +53,9 @@ const FirstLoadScreen = () => {
     );
   }
 
-  // Return the next screen/component you want to navigate to after the loading screen
-  return <Disclaimer navigation={navigation} />;
+  return null; // This will not be reached because we navigate away as soon as isLoading is false
 };
+
 
 
 
@@ -89,23 +96,64 @@ const Disclaimer = ({ navigation }) => {
   }
 
   return (
-    <ScrollView style={styles.scrollContainerDis}>
-      <ScrollView style={styles.termsScrollView}>
-        <Text style={styles.Para1}>This app is in the beta stage of development at the moment and is <Text style={styles.Red}>not</Text> ready for public consumption!</Text>
-        {/* ... other paragraphs ... */}
-        <Text style={styles.Para8}>By entering the app you agree to these terms!</Text>
+    <View style={styles.scrollContainerDis} >
+      <ScrollView style={styles.termsScrollView} nestedScrollEnabled={true}>
+        <Text>Terms of Use for Beat Box: Box to the Beat!</Text>
+
+<Text>1. Acceptance of Terms</Text>  
+
+<Text>By accessing and using Beat Box: Box to the Beat!, you agree to comply with and be bound by these Terms of Use. If you do not agree to these terms, please do not use the app.</Text>
+
+<Text>2. Description of Service</Text>
+
+<Text>Beat Box: Box to the Beat! provides users with audio guidance, including music and punching sounds, to assist in their boxing workouts. The app is intended for entertainment and general fitness purposes only.</Text>
+
+<Text>3. Health and Safety Precautions </Text>
+
+<Text>Before beginning any workout, users must:</Text>
+
+<Text>Consult with a healthcare professional or physician to ensure that they are fit for physical activity.</Text>
+<Text>Warm up properly to prepare the body for exercise.</Text>
+<Text>Stretch to prevent injuries.</Text>
+<Text>If using a punching bag, always wear hand wraps, boxing gloves and any other appropriate protective gear.</Text>
+
+<Text>4. Limitation of Liability</Text>
+
+<Text>Users understand and agree that:</Text>
+
+<Text>They are using Beat Box: Box to the Beat! at their own risk.</Text>
+<Text>They are solely responsible for any damage to their property, injury to themselves, or third parties resulting from the use of this app.</Text>
+<Text>Stix&Stones Productions, or Peter Robert Dobbins, shall not be liable for any direct, indirect, incidental, special, or consequential damages, including but not limited to, damages for loss of profits, goodwill, use, data, or other intangible losses resulting from the use of the app.</Text>
+
+<Text>5. No Warranty</Text>
+
+<Text>Beat Box: Box to the Beat! is provided "as is" without any warranty of any kind, either express or implied, including but not limited to the implied warranties of merchantability, fitness for a particular purpose, or non-infringement.</Text>
+
+<Text>6. Indemnification</Text>
+
+<Text>Users agree to indemnify and hold harmless Stix&Stones Productions and/or Peter Robert Dobbins, its officers, directors, employees, and agents from and against any claims, actions, demands, liabilities, judgments, and settlements, including without limitation, reasonable legal fees resulting from or alleged to result from their use of Beat Box: Box to the Beat.</Text>
+
+<Text>7. Modification of Terms</Text>
+
+<Text>Stix&Stones Productions and/or Peter Robert Dobbins reserves the right to change or modify these Terms of Use at any time without notice. Users are responsible for regularly reviewing these terms. Continued use of Beat Box: Box to the Beat! after any such changes constitutes the user's consent to such changes.</Text>
+
+<Text>8. Governing Law</Text>
+
+<Text>These Terms of Use shall be governed by and construed in accordance with the laws of the United Kingdom, without regard to its conflict of law principles.</Text>
+
+<Text>9. Contact</Text>
+
+<Text>For any questions regarding these Terms of Use, please contact stix_stones_productions@yahoo.com.</Text>
       </ScrollView>
       <View style={styles.checkboxContainer}>
-        <CustomCheckBox
-          value={isChecked}
-          onValueChange={setIsChecked}
-        />
+      <CustomCheckBox isChecked={isChecked} onValueChange={setIsChecked}
+/>
         <Text>I have read and accept the terms of use.</Text>
       </View>
-      <TouchableOpacity onPress={handleButtonPress}>
+      <View style={styles.button2}><TouchableOpacity style={styles.button1} onPress={handleButtonPress}>
         <Image style={styles.button} source={require('./assets/donotpress.jpg')} />
-      </TouchableOpacity>
-    </ScrollView>
+      </TouchableOpacity></View>
+    </View>
   );
 };
   
@@ -172,6 +220,13 @@ const HomeScreen = () => {
           <Image style={styles.homeImage3} source={require('./assets/levels1.png')}  resizeMode="contain"/>
         </TouchableOpacity>
       </ScrollView>
+      <SafeAreaView>
+        <AdMobBanner
+          bannerSize="fullBanner"
+          adUnitID="ca-app-pub-3940256099942544/6300978111" // Test ad unit ID
+          onDidFailToReceiveAdWithError={error => console.error(error)}
+        />
+      </SafeAreaView>
     </View>
   );
 };
@@ -1261,6 +1316,7 @@ const App = () => {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="FirstLoad" screenOptions={{ headerShown: false }}>
         <Stack.Screen name="FirstLoad" component={FirstLoadScreen} />
+        <Stack.Screen name="Disclaimer" component={Disclaimer} />
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Instructions" component={Instructions} />
         <Stack.Screen name="Artists" component={Artists} />
@@ -1282,17 +1338,26 @@ const App = () => {
 
 
 
+
 const styles = StyleSheet.create({
+  loading: {
+    width: "100%",
+    height: "100%",
+  },
 
   scrollContainerDis: {
     flex: 1,
-    padding: 10,
+    padding: '10%',
+  
+    
   },
   termsScrollView: {
-    maxHeight: 200, // Adjust this value based on your preference
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginBottom: 10,
+     // Adjust this value based on your preference
+     maxHeight: '90%', // Adjust this value based on your preference
+     borderColor: 'gray',
+     borderWidth: 1,
+     marginBottom: '5%',
+     marginTop: '10%',
   },
   checkboxContainer: {
     flexDirection: 'row',
@@ -1300,98 +1365,32 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 
-
-  scrollContainer: {
-    flexGrow: 1,
-    paddingHorizontal: 10,
-   
-  },
- 
-  loading: {
-    width: "100%",
-    height: "100%",
-  },
-  // Disclaimer screen
-  Para1: {
-    textAlign: "center",
-    fontSize: 25,
-    fontWeight: "bold",
-    marginTop: 90,
-    lineHeight: 50,
-    marginHorizontal: 2,
-  },
-  // for red text on disclaimer screen
-  Red: {
-    color: "red",
-  },
-  Para2: {
-    textAlign: "center",
-    fontSize: 25,
-    fontWeight: "bold",
-    marginTop: 5,
-    lineHeight: 50,
-    marginHorizontal: 2,
-    textDecorationLine: "underline",
-  },
-  Para3: {
-    textAlign: "center",
-    fontSize: 40,
-    fontWeight: "bold",
-    marginTop: 20,
-    lineHeight: 50,
-    marginHorizontal: 2,
-    color: "red",
-  },
-
-  Para4: {
-    textAlign: "center",
-    fontSize: 20,
-    fontWeight: "bold",
-    marginTop: 10,
-    lineHeight: 50,
-    marginHorizontal: 2,
-  },
-  Para5: {
-    textAlign: "center",
-    fontSize: 20,
-    fontWeight: "bold",
-    marginTop: 5,
-    lineHeight: 30,
-    marginHorizontal: 2,
-  },
-  Para6: {
-    textAlign: "center",
-    fontSize: 20,
-    fontWeight: "bold",
-    marginTop: 10,
-    lineHeight: 30,
-    marginHorizontal: 2,
-  },
-  Para7: {
-    textAlign: "center",
-    fontSize: 20,
-    fontWeight: "bold",
-    marginTop: 10,
-    lineHeight: 30,
-    marginHorizontal: 2,
-  },
-  Para8: {
-    textAlign: "center",
-    fontSize: 20,
-    fontWeight: "bold",
-    marginTop: 10,
-    lineHeight: 30,
-    marginHorizontal: 2,
-  },
-
   button: {
-    width: 140,
-    height: 140,
+    width: '100%',
+    height: '100%',
     borderRadius: 100 ,
     alignSelf: 'center',
-    marginTop: 20,
-    marginBottom: 60,
+    marginTop: '50%',
+    marginBottom: '10%',
   },
+  button1: {
+    width: '40%',
+    height: '40%',
+    alignSelf: 'center',
+    
+  },
+  button2: {
+    width: '100%',
+    
+  },
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
   // This is all for the home screen where the user has the first options to select instructions artists and levels 
   container2: {
     flex: 1,

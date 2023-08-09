@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 
 const CustomCheckBox = ({ label, isChecked, onValueChange }) => {

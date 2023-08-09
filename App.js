@@ -1,4 +1,4 @@
-import { StyleSheet, Image, Text, View, ScrollView, TouchableOpacity, } from 'react-native';
+import { StyleSheet, Image, Text, View, ScrollView, TouchableOpacity } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -7,16 +7,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import ImageWithShadow from './ImageWithShadow';
 import { Audio } from 'expo-av';
 import { Video, ResizeMode } from 'expo-av';
-import { enableScreens } from 'react-native-screens';
-
-
-
-
-
-
-
-
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import CustomCheckBox from './CustomCheckBox';
 
 
 
@@ -63,32 +55,95 @@ const FirstLoadScreen = () => {
 
 
 
-  
 
- 
+const TERMS_ACCEPTED_KEY = 'termsAccepted';
 
 const Disclaimer = ({ navigation }) => {
-  const handleButtonPress = () => {
-    navigation.navigate('Home');
+  const [isChecked, setIsChecked] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const checkTermsAccepted = async () => {
+      const value = await AsyncStorage.getItem(TERMS_ACCEPTED_KEY);
+      if (value === 'true') {
+        navigation.navigate('Home');
+      } else {
+        setIsLoading(false);
+      }
+    };
+
+    checkTermsAccepted();
+  }, [navigation]);
+
+  const handleButtonPress = async () => {
+    if (isChecked) {
+      await AsyncStorage.setItem(TERMS_ACCEPTED_KEY, 'true');
+      navigation.navigate('Home');
+    } else {
+      alert('Please read and accept the terms of use before proceeding.');
+    }
   };
 
+  if (isLoading) {
+    return null; // or you can return a loading spinner if you have one
+  }
+
   return (
-    <ScrollView style={styles.scrollContainer}>
-      <Text style={styles.Para1}>This app is in the beta stage of development at the moment and is <Text style={styles.Red}>not</Text> ready for public consumption!</Text> 
-      <Text style={styles.Para2}>Do Not Use This App!</Text> 
-      <Text style={styles.Para3}>Attention!</Text> 
-      <Text style={styles.Para4}>This app will not teach you how to box!</Text> 
-      <Text style={styles.Para5}>You can use this app without a punching bag, however you will get the best experience with one.</Text> 
-      <Text style={styles.Para6}>You should warm up, stretch, wear hand wraps and boxing gloves!</Text> 
-      <Text style={styles.Para7}>Stix&Stones Productions Ltd <Text style={styles.Red}>accepts no responsibility</Text> for any harm caused to the user, equipment, or those around the user before, during or after the use of this app.</Text> 
-      <Text style={styles.Para8}>By entering the app you agree to these terms!</Text> 
+    <ScrollView style={styles.scrollContainerDis}>
+      <ScrollView style={styles.termsScrollView}>
+        <Text style={styles.Para1}>This app is in the beta stage of development at the moment and is <Text style={styles.Red}>not</Text> ready for public consumption!</Text>
+        {/* ... other paragraphs ... */}
+        <Text style={styles.Para8}>By entering the app you agree to these terms!</Text>
+      </ScrollView>
+      <View style={styles.checkboxContainer}>
+        <CustomCheckBox
+          value={isChecked}
+          onValueChange={setIsChecked}
+        />
+        <Text>I have read and accept the terms of use.</Text>
+      </View>
       <TouchableOpacity onPress={handleButtonPress}>
         <Image style={styles.button} source={require('./assets/donotpress.jpg')} />
       </TouchableOpacity>
     </ScrollView>
   );
 };
+  
 // this is the screen after the disclaimer 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 const HomeScreen = () => {
   const navigation = useNavigation();
 
@@ -101,26 +156,30 @@ const HomeScreen = () => {
   const handleButtonPress2 = () => {
     navigation.navigate('Levels');
   };
+  
   return (
-    <View style={styles.HomeScreen}>
-      <Image source={require('./assets/pg3img1.jpg')} style={styles.home} />
-      <Image source={require('./assets/instructions.png')} style={styles.home2} resizeMode="contain"/>
-      <TouchableOpacity onPress={handleButtonPress} style={styles.touchHome}>
-      <Image source={require('./assets/instructions1.png')} style={styles.home3} resizeMode="contain"/>
-      </TouchableOpacity>
-      <Image source={require('./assets/artists.png')} style={styles.home4} resizeMode="contain"/>
-      <TouchableOpacity onPress={handleButtonPress1}  style={styles.artAndLeveltext1}><Image source={require('./assets/artists1.png')} style={styles.home5} resizeMode="contain"/></TouchableOpacity>
-      <Image source={require('./assets/levels.png')} style={styles.home6} resizeMode="contain"/>
-      <TouchableOpacity onPress={handleButtonPress2} style={styles.artAndLeveltext1}><Image source={require('./assets/levels1.png')} style={styles.home7} resizeMode="contain"/></TouchableOpacity>
-      
-      </View>
-    
+    <View style={styles.container2}>
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+        <TouchableOpacity onPress={handleButtonPress} style={styles.imageWrapper2}>
+          <Image style={styles.homeImage1} source={require('./assets/instructions1.png')} resizeMode="contain"/>
+        </TouchableOpacity>
+  
+        <TouchableOpacity onPress={handleButtonPress1} style={styles.imageWrapper3}>
+          <Image style={styles.homeImage2} source={require('./assets/artists1.png')} resizeMode="contain"/>
+        </TouchableOpacity>
+  
+        <TouchableOpacity onPress={handleButtonPress2} style={styles.imageWrapper4}>
+          <Image style={styles.homeImage3} source={require('./assets/levels1.png')}  resizeMode="contain"/>
+        </TouchableOpacity>
+      </ScrollView>
+    </View>
   );
 };
+
 const Instructions = () => {
  
   return (
-     <View style={styles.HomeScreen}>
+     <View style={styles.instCont}>
       <ScrollView>
       <Text style={styles.pt}>Watch the video!</Text>
         <Video
@@ -150,71 +209,316 @@ const Instructions = () => {
 
     const navigation = useNavigation();
   const handleButtonPress = () => {
-    navigation.navigate('Ravin');
+    navigation.navigate('Aisha');
   }
-    return (
-      <View style={styles.HomeScreen}>
+  const handleButtonPress2 = () => {
+    navigation.navigate('DayG');
+  }
+  const handleButtonPress3 = () => {
+    navigation.navigate('Lola');
+  }
+  return (
+    <View style={styles.artCont}>
       <ScrollView>
-        <Text style={styles.artistsWriting} >Artists</Text>
-       <TouchableOpacity style={styles.peterDobbins}  onPress={handleButtonPress} >
-       <ImageWithShadow 
-        imageSource={require('./assets/peter-dobbins.jpg')}
-        customStyles={{ width: 250, height: 250, borderRadius: 10, }}>
-        </ImageWithShadow>
+      
+        <TouchableOpacity style={styles.artTouch} onPress={handleButtonPress}>
+        <Text style={styles.artText}>Aisha</Text>
+          <ImageWithShadow 
+            imageSource={require('./assets/tech.jpg')}
+            customStyles={styles.image}
+          />
         </TouchableOpacity>
-        
-          </ScrollView>
-      </View>
+        <TouchableOpacity style={styles.artTouch2} onPress={handleButtonPress2}>
+        <Text style={styles.artText}>DayG</Text>
+          <ImageWithShadow 
+            imageSource={require('./assets/hip.jpg')}
+            customStyles={styles.image}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.artTouch3} onPress={handleButtonPress3}>
+        <Text style={styles.artText}>Lola</Text>
+          <ImageWithShadow 
+            imageSource={require('./assets/spain.jpg')}
+            customStyles={styles.image}
+          />
+        </TouchableOpacity>
+      </ScrollView>
+    </View>
        
   
     )};
-
+  
+  
+  
+  
+  
     const Levels = () => {
-
       const navigation = useNavigation();
-    const handleButtonPress = () => {
-      navigation.navigate('Ravin');
-    }
+    
+      const handleButtonPress1 = () => {
+        navigation.navigate('Easy');
+      }
+      const handleButtonPress2 = () => {
+        navigation.navigate('Tough');
+      }
+      const handleButtonPress3 = () => {
+        navigation.navigate('Smash');
+      }
+    
       return (
-        <View style={styles.HomeScreen}>
-        <ScrollView>
-          <Text style={styles.levelsWriting} >evels</Text>
+        <View style={styles.cont}>
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+          <TouchableOpacity onPress={handleButtonPress1} style={styles.levelsWrapper1}>
+            <Image style={styles.levelsImage1} source={require('./assets/easy.png')} resizeMode="contain"/>
+          </TouchableOpacity>
+    
+          <TouchableOpacity onPress={handleButtonPress2} style={styles.levelsWrapper2}>
+            <Image style={styles.levelsImage2} source={require('./assets/tough.png')} resizeMode="contain"/>
+          </TouchableOpacity>
+    
+          <TouchableOpacity onPress={handleButtonPress3} style={styles.levelsWrapper3}>
+            <Image style={styles.levelsImage3} source={require('./assets/smash.png')}  resizeMode="contain"/>
+          </TouchableOpacity>
+        </ScrollView>
+      </View>
+      );
+    };
+    const Aisha = () => {
+      const audioFile = require('./assets/DnB1.mp3');
+      const secondAudioFile = require('./assets/DnB2.mp3'); 
+      const thirdAudioFile = require('./assets/Melodic_deep_house.mp3'); 
+      const fourthAudioFile = require('./assets/Piano_House.mp3'); 
+      const fithAudioFile = require('./assets/Driving_Techno.mp3'); 
+    
+      const sound = React.useRef(new Audio.Sound());
+      const sound2 = React.useRef(new Audio.Sound());
+      const sound3 = React.useRef(new Audio.Sound());
+      const sound4 = React.useRef(new Audio.Sound());
+      const sound5 = React.useRef(new Audio.Sound());
+    
+      const [isPlaying, setIsPlaying] = useState(false);
+      const [isSecondPlaying, setIsSecondPlaying] = useState(false);
+      const [isThirdPlaying, setIsThirdPlaying] = useState(false);
+      const [isFourthPlaying, setIsFourthPlaying] = useState(false);
+      const [isFithPlaying, setIsFithPlaying] = useState(false);
+    
+      useEffect(() => {
+        // Set up the audio session configuration
+        Audio.setAudioModeAsync({
+          allowsRecordingIOS: false,
+          staysActiveInBackground: true,
+          playsInSilentModeIOS: true,
+          shouldDuckAndroid: true,
+          playThroughEarpieceAndroid: false,
+        });
+    
+        return () => {
+          // Unload the audio when the component unmounts
+          sound.current.unloadAsync();
+          sound2.current.unloadAsync();
+          sound3.current.unloadAsync();
+          sound4.current.unloadAsync();
+          sound5.current.unloadAsync();
+        };
+      }, []);
+    
+      const handleAudioPlay = async () => {
+        try {
+          if (isPlaying) {
+            await sound.current.stopAsync();
+            setIsPlaying(false);
+          } else {
+            // Check if the sound is already loaded
+            const status = await sound.current.getStatusAsync();
+            if (!status.isLoaded) {
+              await sound.current.loadAsync(audioFile);
+            }
+            await sound.current.playAsync();
+            setIsPlaying(true);
+          }
+        } catch (error) {
+          console.log('Error in Playing Audio:', error);
+        }
+      };
+    
+      const handleSecondAudioPlay = async () => {
+        try {
+          if (isSecondPlaying) {
+            await sound2.current.stopAsync();
+            setIsSecondPlaying(false);
+          } else {
+            // Check if the sound is already loaded
+            const status = await sound2.current.getStatusAsync();
+            if (!status.isLoaded) {
+              await sound2.current.loadAsync(secondAudioFile);
+            }
+            await sound2.current.playAsync();
+            setIsSecondPlaying(true);
+          }
+        } catch (error) {
+          console.log('Error in Playing Second Audio:', error);
+        }
+      };
+
+      const handleThirdAudioPlay = async () => {
+        try {
+          if (isThirdPlaying) {
+            await sound3.current.stopAsync();
+            setIsThirdPlaying(false);
+          } else {
+            // Check if the sound is already loaded
+            const status = await sound3.current.getStatusAsync();
+            if (!status.isLoaded) {
+              await sound3.current.loadAsync(thirdAudioFile);
+            }
+            await sound3.current.playAsync();
+            setIsThirdPlaying(true);
+          }
+        } catch (error) {
+          console.log('Error in Playing Second Audio:', error);
+        }
+      };
+
+      const handleFourthAudioPlay = async () => {
+        try {
+          if (isFourthPlaying) {
+            await sound4.current.stopAsync();
+            setIsFourthPlaying(false);
+          } else {
+            // Check if the sound is already loaded
+            const status = await sound4.current.getStatusAsync();
+            if (!status.isLoaded) {
+              await sound4.current.loadAsync(fourthAudioFile);
+            }
+            await sound4.current.playAsync();
+            setIsFourthPlaying(true);
+          }
+        } catch (error) {
+          console.log('Error in Playing Second Audio:', error);
+        }
+      };
+      const handleFithAudioPlay = async () => {
+        try {
+          if (isFithPlaying) {
+            await sound5.current.stopAsync();
+            setIsFithPlaying(false);
+          } else {
+            // Check if the sound is already loaded
+            const status = await sound5.current.getStatusAsync();
+            if (!status.isLoaded) {
+              await sound5.current.loadAsync(fithAudioFile);
+            }
+            await sound5.current.playAsync();
+            setIsFithPlaying(true);
+          }
+        } catch (error) {
+          console.log('Error in Playing Second Audio:', error);
+        }
+      };
+    
+      return (
+        <LinearGradient colors={['#09FF05', '#309ABC']} style={styles.gradientContainer}>
+          <ScrollView>
           
-          <Image source={require('./assets/yellow.png')} style={styles.level1} resizeMode="contain"/>
-      <TouchableOpacity onPress={handleButtonPress}  style={styles.easy}><Image source={require('./assets/easy.png')} style={styles.home5} resizeMode="contain"/></TouchableOpacity>
-      
-      <Image source={require('./assets/green.png')} style={styles.level2} resizeMode="contain"/>
-      <TouchableOpacity onPress={handleButtonPress}  style={styles.tough}><Image source={require('./assets/tough.png')} style={styles.home5} resizeMode="contain"/></TouchableOpacity>
+          <View>
+              <View style={styles.sprite}>
+                <ImageWithShadow
+                  imageSource={require('./assets/sprite.jpg')}
+                  customStyles={styles.image}
+                />
+              </View>
+            
+          </View>
+          <View style={styles.playStopButton}>
+            <TouchableOpacity onPress={handleAudioPlay}>
+              {isPlaying ? <Image source={require('./assets/stop.png')} /> : <Image source={require('./assets/Play.png')} />}
+            </TouchableOpacity>
+          </View>
+          <Text style={styles.spriteText}>Cry of the Fighting Sprite</Text>
+          
+          
+          <View>
+            
+              <View style={styles.sprite}>
+                <ImageWithShadow
+                  imageSource={require('./assets/soul.jpg')} // Replace 'second_image.jpg' with the path to your second image
+                  customStyles={styles.image}
+                />
+              </View>
+            
+          </View>
+          <View style={styles.playStopButton}>
+            <TouchableOpacity onPress={handleSecondAudioPlay}>
+              {isSecondPlaying ? <Image source={require('./assets/stop.png')} /> : <Image source={require('./assets/Play.png')} />}
+            </TouchableOpacity>
+          </View>
+          <Text style={styles.spriteText}>Soul Searcher</Text>
+          
+          
+          
+          
+          
+          <View>
+            
+              <View style={styles.sprite}>
+                <ImageWithShadow
+                  imageSource={require('./assets/fanfare.jpg')} // Replace 'second_image.jpg' with the path to your second image
+                  customStyles={styles.image}
+                />
+              </View>
+              </View>
+              
+              <View style={styles.playStopButton}>
+            <TouchableOpacity onPress={handleThirdAudioPlay}>
+              {isThirdPlaying ? <Image source={require('./assets/stop.png')} /> : <Image source={require('./assets/Play.png')} />}
+            </TouchableOpacity>
+          </View>
+          
+          
+          <Text style={styles.spriteText}>The Final Fanfare</Text>
+          
+          <View style={styles.sprite}>
+                <ImageWithShadow
+                  imageSource={require('./assets/pianoman.jpg')} // Replace 'second_image.jpg' with the path to your second image
+                  customStyles={styles.image}
+                />
+              </View>
+              <View style={styles.playStopButton}>
+            <TouchableOpacity onPress={handleFourthAudioPlay}>
+              {isFourthPlaying ? <Image source={require('./assets/stop.png')} /> : <Image source={require('./assets/Play.png')} />}
+            </TouchableOpacity>
+          </View>
+          <Text style={styles.spriteText}>Pianist of Dreams</Text>
 
-      <Image source={require('./assets/blue.png')} style={styles.level3} resizeMode="contain"/>
-      <TouchableOpacity onPress={handleButtonPress}  style={styles.smash}><Image source={require('./assets/smash.png')} style={styles.home5} resizeMode="contain"/></TouchableOpacity>
 
-
-
+          <View style={styles.sprite}>
+                <ImageWithShadow
+                  imageSource={require('./assets/deamon.jpg')} // Replace 'second_image.jpg' with the path to your second image
+                  customStyles={styles.image}
+                />
+              </View>
+              <View style={styles.playStopButton}>
+            <TouchableOpacity onPress={handleFithAudioPlay}>
+              {isFithPlaying ? <Image source={require('./assets/stop.png')} /> : <Image source={require('./assets/Play.png')} />}
+            </TouchableOpacity>
+          </View>
+          <Text style={styles.spriteText}>Demons' Beat</Text>
          
           
-            </ScrollView>
-        </View>
-         
-    
-      )};
+          </ScrollView>
+        </LinearGradient>
+      );
+    };
 
-    
+const DayG = () => {
+  const audioFile = require('./assets/hhdpt.mp3');
+   
 
-
-
-
-
-
-
-//                                                   RAVIN!
-
-
-
-const Ravin = () => {
-  const audioFile = require('./assets/tune.mp3');
   const sound = React.useRef(new Audio.Sound());
+ 
+
   const [isPlaying, setIsPlaying] = useState(false);
+  
 
   useEffect(() => {
     // Set up the audio session configuration
@@ -223,12 +527,13 @@ const Ravin = () => {
       staysActiveInBackground: true,
       playsInSilentModeIOS: true,
       shouldDuckAndroid: true,
-      playThroughEarpieceAndroid: false
-  });
+      playThroughEarpieceAndroid: false,
+    });
 
     return () => {
       // Unload the audio when the component unmounts
       sound.current.unloadAsync();
+     
     };
   }, []);
 
@@ -250,44 +555,704 @@ const Ravin = () => {
       console.log('Error in Playing Audio:', error);
     }
   };
-return (
-    <LinearGradient
-      colors={['#A88D61', '#81370A']}
-      style={styles.gradientContainer}
-    >
+
+  
+
+  
+
+  
+  
+
+  return (
+    <LinearGradient colors={['#01BFCD', '#233947']} style={styles.gradientContainer}>
+      <ScrollView>
+      
       <View>
-        <ScrollView>
-          <View style={styles.ravinImage}>
+          <View style={styles.sprite}>
             <ImageWithShadow
-              imageSource={require('./assets/peter-dobbins.jpg')}
-              customStyles={{ width: 250, height: 250, borderRadius: 10 }}
+              imageSource={require('./assets/rap1.jpg')}
+              customStyles={styles.image}
             />
           </View>
-        </ScrollView>
+        
       </View>
-      <View style={styles.container}>
-        <TouchableOpacity style={styles.button2} onPress={handleAudioPlay}>
-          <Text style={styles.buttonText}>{isPlaying ? 'Stop Sound' : 'Play Sound'}</Text>
+      <View style={styles.playStopButton}>
+        <TouchableOpacity onPress={handleAudioPlay}>
+          {isPlaying ? <Image source={require('./assets/stop.png')} /> : <Image source={require('./assets/Play.png')} />}
         </TouchableOpacity>
       </View>
+      <Text style={styles.spriteText}>The Truth is Within</Text>
+      
+      
+     
+      
+     
+      
+     
+
+     
+     
+      
+      </ScrollView>
     </LinearGradient>
   );
 };
 
+const Lola = () => {
+  const audioFile = require('./assets/Latin_Pop_Easy.mp3');
+  const secondAudioFile = require('./assets/Tropical_House.mp3'); 
+  const thirdAudioFile = require('./assets/Latin_Hard.mp3'); 
+  
+
+  const sound = React.useRef(new Audio.Sound());
+  const sound2 = React.useRef(new Audio.Sound());
+  const sound3 = React.useRef(new Audio.Sound());
+
+
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isSecondPlaying, setIsSecondPlaying] = useState(false);
+  const [isThirdPlaying, setIsThirdPlaying] = useState(false);
+  
+
+  useEffect(() => {
+    // Set up the audio session configuration
+    Audio.setAudioModeAsync({
+      allowsRecordingIOS: false,
+      staysActiveInBackground: true,
+      playsInSilentModeIOS: true,
+      shouldDuckAndroid: true,
+      playThroughEarpieceAndroid: false,
+    });
+
+    return () => {
+      // Unload the audio when the component unmounts
+      sound.current.unloadAsync();
+      sound2.current.unloadAsync();
+      sound3.current.unloadAsync();
+    };
+  }, []);
+
+  const handleAudioPlay = async () => {
+    try {
+      if (isPlaying) {
+        await sound.current.stopAsync();
+        setIsPlaying(false);
+      } else {
+        // Check if the sound is already loaded
+        const status = await sound.current.getStatusAsync();
+        if (!status.isLoaded) {
+          await sound.current.loadAsync(audioFile);
+        }
+        await sound.current.playAsync();
+        setIsPlaying(true);
+      }
+    } catch (error) {
+      console.log('Error in Playing Audio:', error);
+    }
+  };
+
+  const handleSecondAudioPlay = async () => {
+    try {
+      if (isSecondPlaying) {
+        await sound2.current.stopAsync();
+        setIsSecondPlaying(false);
+      } else {
+        // Check if the sound is already loaded
+        const status = await sound2.current.getStatusAsync();
+        if (!status.isLoaded) {
+          await sound2.current.loadAsync(secondAudioFile);
+        }
+        await sound2.current.playAsync();
+        setIsSecondPlaying(true);
+      }
+    } catch (error) {
+      console.log('Error in Playing Second Audio:', error);
+    }
+  };
+
+  const handleThirdAudioPlay = async () => {
+    try {
+      if (isThirdPlaying) {
+        await sound3.current.stopAsync();
+        setIsThirdPlaying(false);
+      } else {
+        // Check if the sound is already loaded
+        const status = await sound3.current.getStatusAsync();
+        if (!status.isLoaded) {
+          await sound3.current.loadAsync(thirdAudioFile);
+        }
+        await sound3.current.playAsync();
+        setIsThirdPlaying(true);
+      }
+    } catch (error) {
+      console.log('Error in Playing Second Audio:', error);
+    }
+  };
+
+  
+  
+
+  return (
+    <LinearGradient colors={['#FFF98D', '#AFCCD5', '#D1B784' ]} style={styles.gradientContainer}>
+      <ScrollView>
+      
+      <View>
+          <View style={styles.sprite}>
+            <ImageWithShadow
+              imageSource={require('./assets/stomp.jpg')}
+              customStyles={styles.image}
+            />
+          </View>
+        
+      </View>
+      <View style={styles.playStopButton}>
+        <TouchableOpacity onPress={handleAudioPlay}>
+          {isPlaying ? <Image source={require('./assets/stop.png')} /> : <Image source={require('./assets/Play.png')} />}
+        </TouchableOpacity>
+      </View>
+      <Text style={styles.spriteText}>Sunshine Stomp</Text>
+      
+      
+      <View>
+        
+          <View style={styles.sprite}>
+            <ImageWithShadow
+              imageSource={require('./assets/godess.jpg')} // Replace 'second_image.jpg' with the path to your second image
+              customStyles={styles.image}
+            />
+          </View>
+        
+      </View>
+      <View style={styles.playStopButton}>
+        <TouchableOpacity onPress={handleSecondAudioPlay}>
+          {isSecondPlaying ? <Image source={require('./assets/stop.png')} /> : <Image source={require('./assets/Play.png')} />}
+        </TouchableOpacity>
+      </View>
+      <Text style={styles.spriteText}>Battle of Sand and Sea</Text>
+      
+      
+      
+      
+      
+      <View>
+        
+          <View style={styles.sprite}>
+            <ImageWithShadow
+              imageSource={require('./assets/spanguitar.jpg')} // Replace 'second_image.jpg' with the path to your second image
+              customStyles={styles.image}
+            />
+          </View>
+          </View>
+          
+          <View style={styles.playStopButton}>
+        <TouchableOpacity onPress={handleThirdAudioPlay}>
+          {isThirdPlaying ? <Image source={require('./assets/stop.png')} /> : <Image source={require('./assets/Play.png')} />}
+        </TouchableOpacity>
+      </View>
+      
+      
+      <Text style={styles.spriteText}>Guitarra Española</Text>
+      
       
 
 
+     
+      
+      </ScrollView>
+    </LinearGradient>
+  );
+};
+
+const Easy = () => {
+  const audioFile = require('./assets/Latin_Pop_Easy.mp3');
+  const secondAudioFile = require('./assets/Melodic_deep_house.mp3'); 
+  const thirdAudioFile = require('./assets/hhdpt.mp3'); 
+
+  
+  
+
+  const sound = React.useRef(new Audio.Sound());
+  const sound2 = React.useRef(new Audio.Sound());
+  const sound3 = React.useRef(new Audio.Sound());
+
+
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isSecondPlaying, setIsSecondPlaying] = useState(false);
+  const [isThirdPlaying, setIsThirdPlaying] = useState(false);
+  
+
+  useEffect(() => {
+    // Set up the audio session configuration
+    Audio.setAudioModeAsync({
+      allowsRecordingIOS: false,
+      staysActiveInBackground: true,
+      playsInSilentModeIOS: true,
+      shouldDuckAndroid: true,
+      playThroughEarpieceAndroid: false,
+    });
+
+    return () => {
+      // Unload the audio when the component unmounts
+      sound.current.unloadAsync();
+      sound2.current.unloadAsync();
+      sound3.current.unloadAsync();
+    };
+  }, []);
+
+  const handleAudioPlay = async () => {
+    try {
+      if (isPlaying) {
+        await sound.current.stopAsync();
+        setIsPlaying(false);
+      } else {
+        // Check if the sound is already loaded
+        const status = await sound.current.getStatusAsync();
+        if (!status.isLoaded) {
+          await sound.current.loadAsync(audioFile);
+        }
+        await sound.current.playAsync();
+        setIsPlaying(true);
+      }
+    } catch (error) {
+      console.log('Error in Playing Audio:', error);
+    }
+  };
+
+  const handleSecondAudioPlay = async () => {
+    try {
+      if (isSecondPlaying) {
+        await sound2.current.stopAsync();
+        setIsSecondPlaying(false);
+      } else {
+        // Check if the sound is already loaded
+        const status = await sound2.current.getStatusAsync();
+        if (!status.isLoaded) {
+          await sound2.current.loadAsync(secondAudioFile);
+        }
+        await sound2.current.playAsync();
+        setIsSecondPlaying(true);
+      }
+    } catch (error) {
+      console.log('Error in Playing Second Audio:', error);
+    }
+  };
+
+  const handleThirdAudioPlay = async () => {
+    try {
+      if (isThirdPlaying) {
+        await sound3.current.stopAsync();
+        setIsThirdPlaying(false);
+      } else {
+        // Check if the sound is already loaded
+        const status = await sound3.current.getStatusAsync();
+        if (!status.isLoaded) {
+          await sound3.current.loadAsync(thirdAudioFile);
+        }
+        await sound3.current.playAsync();
+        setIsThirdPlaying(true);
+      }
+    } catch (error) {
+      console.log('Error in Playing Second Audio:', error);
+    }
+  };
+
+  
+  
+
+  return (
+    <LinearGradient colors={['#FFEC69', '#99D98B' ]} style={styles.gradientContainer}>
+      <ScrollView>
+      
+      <View>
+          <View style={styles.sprite}>
+            <ImageWithShadow
+              imageSource={require('./assets/stomp.jpg')}
+              customStyles={styles.image}
+            />
+          </View>
+        
+      </View>
+      <View style={styles.playStopButton}>
+        <TouchableOpacity onPress={handleAudioPlay}>
+          {isPlaying ? <Image source={require('./assets/stop.png')} /> : <Image source={require('./assets/Play.png')} />}
+        </TouchableOpacity>
+      </View>
+      <Text style={styles.spriteText}>Sunshine Stomp</Text>
+      
+      
+      <View>
+        
+          <View style={styles.sprite}>
+            <ImageWithShadow
+              imageSource={require('./assets/fanfare.jpg')} // Replace 'second_image.jpg' with the path to your second image
+              customStyles={styles.image}
+            />
+          </View>
+        
+      </View>
+      <View style={styles.playStopButton}>
+        <TouchableOpacity onPress={handleSecondAudioPlay}>
+          {isSecondPlaying ? <Image source={require('./assets/stop.png')} /> : <Image source={require('./assets/Play.png')} />}
+        </TouchableOpacity>
+      </View>
+      <Text style={styles.spriteText}>The Final Fanfare</Text>
+      
+      
+      
+      
+      
+      <View>
+        
+          <View style={styles.sprite}>
+            <ImageWithShadow
+              imageSource={require('./assets/rap1.jpg')} // Replace 'second_image.jpg' with the path to your second image
+              customStyles={styles.image}
+            />
+          </View>
+          </View>
+          
+          <View style={styles.playStopButton}>
+        <TouchableOpacity onPress={handleThirdAudioPlay}>
+          {isThirdPlaying ? <Image source={require('./assets/stop.png')} /> : <Image source={require('./assets/Play.png')} />}
+        </TouchableOpacity>
+      </View>
+      
+      
+      <Text style={styles.spriteText}>The Truth is Within</Text>
+      
+      
+
+
+     
+      
+      </ScrollView>
+    </LinearGradient>
+  );
+};
+
+const Tough = () => {
+  const audioFile = require('./assets/Tropical_House.mp3');
+  const secondAudioFile = require('./assets/DnB1.mp3'); 
+  const thirdAudioFile = require('./assets/DnB2.mp3'); 
+  const fourthAudioFile = require('./assets/Latin_Hard.mp3'); 
+  
+
+  const sound = React.useRef(new Audio.Sound());
+  const sound2 = React.useRef(new Audio.Sound());
+  const sound3 = React.useRef(new Audio.Sound());
+  const sound4 = React.useRef(new Audio.Sound());
+  
+
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isSecondPlaying, setIsSecondPlaying] = useState(false);
+  const [isThirdPlaying, setIsThirdPlaying] = useState(false);
+  const [isFourthPlaying, setIsFourthPlaying] = useState(false);
+ 
+
+  useEffect(() => {
+    // Set up the audio session configuration
+    Audio.setAudioModeAsync({
+      allowsRecordingIOS: false,
+      staysActiveInBackground: true,
+      playsInSilentModeIOS: true,
+      shouldDuckAndroid: true,
+      playThroughEarpieceAndroid: false,
+    });
+
+    return () => {
+      // Unload the audio when the component unmounts
+      sound.current.unloadAsync();
+      sound2.current.unloadAsync();
+      sound3.current.unloadAsync();
+      sound4.current.unloadAsync();
+      
+    };
+  }, []);
+
+  const handleAudioPlay = async () => {
+    try {
+      if (isPlaying) {
+        await sound.current.stopAsync();
+        setIsPlaying(false);
+      } else {
+        // Check if the sound is already loaded
+        const status = await sound.current.getStatusAsync();
+        if (!status.isLoaded) {
+          await sound.current.loadAsync(audioFile);
+        }
+        await sound.current.playAsync();
+        setIsPlaying(true);
+      }
+    } catch (error) {
+      console.log('Error in Playing Audio:', error);
+    }
+  };
+
+  const handleSecondAudioPlay = async () => {
+    try {
+      if (isSecondPlaying) {
+        await sound2.current.stopAsync();
+        setIsSecondPlaying(false);
+      } else {
+        // Check if the sound is already loaded
+        const status = await sound2.current.getStatusAsync();
+        if (!status.isLoaded) {
+          await sound2.current.loadAsync(secondAudioFile);
+        }
+        await sound2.current.playAsync();
+        setIsSecondPlaying(true);
+      }
+    } catch (error) {
+      console.log('Error in Playing Second Audio:', error);
+    }
+  };
+
+  const handleThirdAudioPlay = async () => {
+    try {
+      if (isThirdPlaying) {
+        await sound3.current.stopAsync();
+        setIsThirdPlaying(false);
+      } else {
+        // Check if the sound is already loaded
+        const status = await sound3.current.getStatusAsync();
+        if (!status.isLoaded) {
+          await sound3.current.loadAsync(thirdAudioFile);
+        }
+        await sound3.current.playAsync();
+        setIsThirdPlaying(true);
+      }
+    } catch (error) {
+      console.log('Error in Playing Second Audio:', error);
+    }
+  };
+
+  const handleFourthAudioPlay = async () => {
+    try {
+      if (isFourthPlaying) {
+        await sound4.current.stopAsync();
+        setIsFourthPlaying(false);
+      } else {
+        // Check if the sound is already loaded
+        const status = await sound4.current.getStatusAsync();
+        if (!status.isLoaded) {
+          await sound4.current.loadAsync(fourthAudioFile);
+        }
+        await sound4.current.playAsync();
+        setIsFourthPlaying(true);
+      }
+    } catch (error) {
+      console.log('Error in Playing Second Audio:', error);
+    }
+  };
+ 
+
+  return (
+    <LinearGradient colors={['#99D98B', '#99D98B', '#99D98B', '#DF1932']} style={styles.gradientContainer}>
+      <ScrollView>
+      
+      <View>
+          <View style={styles.sprite}>
+            <ImageWithShadow
+              imageSource={require('./assets/godess.jpg')}
+              customStyles={styles.image}
+            />
+          </View>
+        
+      </View>
+      <View style={styles.playStopButton}>
+        <TouchableOpacity onPress={handleAudioPlay}>
+          {isPlaying ? <Image source={require('./assets/stop.png')} /> : <Image source={require('./assets/Play.png')} />}
+        </TouchableOpacity>
+      </View>
+      <Text style={styles.spriteText}>Battle of Land and Sea</Text>
+      
+      
+      <View>
+        
+          <View style={styles.sprite}>
+            <ImageWithShadow
+              imageSource={require('./assets/sprite.jpg')} // Replace 'second_image.jpg' with the path to your second image
+              customStyles={styles.image}
+            />
+          </View>
+        
+      </View>
+      <View style={styles.playStopButton}>
+        <TouchableOpacity onPress={handleSecondAudioPlay}>
+          {isSecondPlaying ? <Image source={require('./assets/stop.png')} /> : <Image source={require('./assets/Play.png')} />}
+        </TouchableOpacity>
+      </View>
+      <Text style={styles.spriteText}>Cry of the Fighting Sprite</Text>
+      
+      
+      
+      
+      
+      <View>
+        
+          <View style={styles.sprite}>
+            <ImageWithShadow
+              imageSource={require('./assets/soul.jpg')} // Replace 'second_image.jpg' with the path to your second image
+              customStyles={styles.image}
+            />
+          </View>
+          </View>
+          
+          <View style={styles.playStopButton}>
+        <TouchableOpacity onPress={handleThirdAudioPlay}>
+          {isThirdPlaying ? <Image source={require('./assets/stop.png')} /> : <Image source={require('./assets/Play.png')} />}
+        </TouchableOpacity>
+      </View>
+      
+      
+      <Text style={styles.spriteText}>Soul Searcher</Text>
+      
+      <View style={styles.sprite}>
+            <ImageWithShadow
+              imageSource={require('./assets/spanguitar.jpg')} // Replace 'second_image.jpg' with the path to your second image
+              customStyles={styles.image}
+            />
+          </View>
+          <View style={styles.playStopButton}>
+        <TouchableOpacity onPress={handleFourthAudioPlay}>
+          {isFourthPlaying ? <Image source={require('./assets/stop.png')} /> : <Image source={require('./assets/Play.png')} />}
+        </TouchableOpacity>
+      </View>
+      <Text style={styles.spriteText}>Guitarra Española</Text>
+
+      
+      </ScrollView>
+    </LinearGradient>
+  );
+};
+
+const Smash = () => {
+  const audioFile = require('./assets/Piano_House.mp3');
+  const secondAudioFile = require('./assets/Driving_Techno.mp3'); 
+  
+  
+
+  const sound = React.useRef(new Audio.Sound());
+  const sound2 = React.useRef(new Audio.Sound());
+  
+
+
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isSecondPlaying, setIsSecondPlaying] = useState(false);
+  
+  
+
+  useEffect(() => {
+    // Set up the audio session configuration
+    Audio.setAudioModeAsync({
+      allowsRecordingIOS: false,
+      staysActiveInBackground: true,
+      playsInSilentModeIOS: true,
+      shouldDuckAndroid: true,
+      playThroughEarpieceAndroid: false,
+    });
+
+    return () => {
+      // Unload the audio when the component unmounts
+      sound.current.unloadAsync();
+      sound2.current.unloadAsync();
+      
+    };
+  }, []);
+
+  const handleAudioPlay = async () => {
+    try {
+      if (isPlaying) {
+        await sound.current.stopAsync();
+        setIsPlaying(false);
+      } else {
+        // Check if the sound is already loaded
+        const status = await sound.current.getStatusAsync();
+        if (!status.isLoaded) {
+          await sound.current.loadAsync(audioFile);
+        }
+        await sound.current.playAsync();
+        setIsPlaying(true);
+      }
+    } catch (error) {
+      console.log('Error in Playing Audio:', error);
+    }
+  };
+
+  const handleSecondAudioPlay = async () => {
+    try {
+      if (isSecondPlaying) {
+        await sound2.current.stopAsync();
+        setIsSecondPlaying(false);
+      } else {
+        // Check if the sound is already loaded
+        const status = await sound2.current.getStatusAsync();
+        if (!status.isLoaded) {
+          await sound2.current.loadAsync(secondAudioFile);
+        }
+        await sound2.current.playAsync();
+        setIsSecondPlaying(true);
+      }
+    } catch (error) {
+      console.log('Error in Playing Second Audio:', error);
+    }
+  };
 
 
 
+  
+  
+
+  return (
+    <LinearGradient colors={['#DF1932', '#000000' ]} style={styles.gradientContainer}>
+      <ScrollView>
+      
+      <View>
+          <View style={styles.sprite}>
+            <ImageWithShadow
+              imageSource={require('./assets/pianoman.jpg')}
+              customStyles={styles.image}
+            />
+          </View>
+        
+      </View>
+      <View style={styles.playStopButton}>
+        <TouchableOpacity onPress={handleAudioPlay}>
+          {isPlaying ? <Image source={require('./assets/stop.png')} /> : <Image source={require('./assets/Play.png')} />}
+        </TouchableOpacity>
+      </View>
+      <Text style={styles.spriteText}>Pianist of Dreams</Text>
+      
+      
+      <View>
+        
+          <View style={styles.sprite}>
+            <ImageWithShadow
+              imageSource={require('./assets/deamon.jpg')} // Replace 'second_image.jpg' with the path to your second image
+              customStyles={styles.image}
+            />
+          </View>
+        
+      </View>
+      <View style={styles.playStopButton}>
+        <TouchableOpacity onPress={handleSecondAudioPlay}>
+          {isSecondPlaying ? <Image source={require('./assets/stop.png')} /> : <Image source={require('./assets/Play.png')} />}
+        </TouchableOpacity>
+      </View>
+      <Text style={styles.spriteText}>Demons' Beat</Text>
+      
+      
+      
+    
+      
 
 
-
-
-
-
-
-
+     
+      
+      </ScrollView>
+    </LinearGradient>
+  );
+};
 
 const Stack = createStackNavigator();
 
@@ -299,8 +1264,14 @@ const App = () => {
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Instructions" component={Instructions} />
         <Stack.Screen name="Artists" component={Artists} />
-        <Stack.Screen name="Ravin" component={Ravin} />
+        <Stack.Screen name="Aisha" component={Aisha} />
+        <Stack.Screen name="DayG" component={DayG} />
+        <Stack.Screen name="Lola" component={Lola} />
         <Stack.Screen name="Levels" component={Levels} />
+        <Stack.Screen name="Easy" component={Easy} />
+        <Stack.Screen name="Tough" component={Tough} />
+        <Stack.Screen name="Smash" component={Smash} />
+        
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -312,6 +1283,24 @@ const App = () => {
 
 
 const styles = StyleSheet.create({
+
+  scrollContainerDis: {
+    flex: 1,
+    padding: 10,
+  },
+  termsScrollView: {
+    maxHeight: 200, // Adjust this value based on your preference
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 10,
+  },
+  checkboxContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+
+
   scrollContainer: {
     flexGrow: 1,
     paddingHorizontal: 10,
@@ -403,84 +1392,65 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 60,
   },
-
   // This is all for the home screen where the user has the first options to select instructions artists and levels 
-  HomeScreen: {
+  container2: {
+    flex: 1,
     backgroundColor: "black",
-    height: "100%",
-    width: "100%",
-    
-
-  },
-   // beat box img
-  home: {
-    width: 200,
-    height: 200,
-    alignSelf: 'center',
-    marginTop: 40,
-    marginBottom: -150,
-    borderRadius: 20,
-  },
-// instructions button bg
-touchHome: {
-  width: "100%",
-  height: "100%",
-  marginBottom: -1000,
+    justifyContent: 'center',
+},
+  
+imageWrapper2: {
+  width: '100%',
+  height: '33.33%', // Change the height to a percentage of the total height
+  alignItems: 'center',
+  justifyContent: 'center',
+  marginTop: '10%',
 },
 
-// image at the top "beatbox image"
-  home2: {
-    width: "50%",
-    height: "55%",
-    aspectRatio: 1,
-    alignSelf: 'center',
-    
-    
-  },
-  // instruvtions txt
-  home3: {
-    width: "80%",
-    height: "55%",
-    //aspectRatio: 1,
-    alignSelf: 'center',
-    marginTop: -450,
-    
-    
-  },
-  // artists bg
-  home4: {
-  width: "30%",
-    height: "30%",
-    aspectRatio: 1,
-    alignSelf: 'center',
-  },
-  // artists text
-  home5: {
-    width: "23%",
-      height: "23%",
-      aspectRatio: 1,
-      alignSelf: 'center',
-      marginTop: -230
-    },
-    // levels bg
-    home6: {
-      width: "40%",
-        height: "40%",
-        aspectRatio: 1,
-        alignSelf: 'center',
-        marginTop: -885,
-        marginLeft: 10,
-      },
-      // levels txt
-      home7: {
-        width: "18%",
-          height: "18%",
-          aspectRatio: 1,
-          alignSelf: 'center',
-          marginTop: -280,
-        },
+imageWrapper3: {
+  width: '100%',
+  height: '33.33%', // Change the height to a percentage of the total height
+  alignItems: 'center',
+  justifyContent: 'center',
+},
 
-        // this is the instructions screen 
+imageWrapper4: {
+  width: '100%',
+  height: '33.33%', // Change the height to a percentage of the total height
+  alignItems: 'center',
+  justifyContent: 'center',
+},
+
+homeImage1: {
+    width: '130%',
+    height: '100%',
+    resizeMode: 'contain',
+},
+
+homeImage2: {
+    width: '85%',
+    height: '100%',
+    resizeMode: 'contain',
+    marginTop: '-15%',
+},
+
+homeImage3: {
+    width: '150%',
+    height: '100%',
+    resizeMode: 'contain',
+    marginBottom: '10%'
+
+},
+
+  
+
+ // this is the instructions screen 
+
+ instCont: {
+  flex: 1,
+  backgroundColor: "black",
+
+ },
         pt: {
           color: "white",
           marginTop: 100,
@@ -511,68 +1481,100 @@ touchHome: {
           fontSize: 30,
           },
           
+// this is for the Artists page
+      
+          
+            artCont: {
+              backgroundColor: "black",
+              flex: 1,
+            },
+            artText: {
+              color: 'white',
+              alignSelf: 'center',
+              fontFamily: 'CustomFont',
+              fontSize: 50,
+              
 
-      
-
-// the Aritist and Levels writing (Went funny when trying to apply the touchable opcaity)
-      
-       artAndLeveltext1: {
-        width: "100%",
-        height: "100%",
-        
-      },
-
-      // this is for the Artists page
-      
-     
-      peterDobbins: {
-        alignSelf: 'center',
-        marginTop: 50,
-        height: 270,
-        
-        
-    },
-    artistsWriting: {
-      color: '#FFFFFF',
-      fontFamily: 'AnotherCustomFont',
-      fontSize: 150,
-      alignSelf: 'center',
-      marginTop: 80, 
-      
-    },
-      
-      
-
+            },
+            artTouch: {
+              alignSelf: 'center',
+              flex: 1,
+              width: '60%',
+              marginTop: '20%', 
+              marginBottom: '10%',
+              aspectRatio: 1,
+            },
+            artTouch2: {
+              alignSelf: 'center',
+              flex: 1,
+              width: '60%',
+              marginTop: '20%', 
+              marginBottom: '10%',
+              aspectRatio: 1,
+            },
+            artTouch3: {
+              alignSelf: 'center',
+              flex: 1,
+              width: '60%',
+              marginTop: '20%', 
+              marginBottom: '30%',
+              aspectRatio: 1,
+            },
+            image: {
+              width: '100%',
+              height: '100%',
+              aspectRatio: 1, // This will make the images square
+              borderRadius: 20,
+            },
+         
+          
     
+      
 
 
-// this is for the Ravin page, with my music!!
+
+
+
+
+
+
+
+
+            // this is for the Aisha page, with my music!!
 gradientContainer: {
   width: '100%',
   height: '100%',
   opacity: 0.9,
 },
-ravinImage: {
+sprite: {
   alignSelf: 'center',
-  marginTop: 100,
-  paddingBottom: 20, // Add padding to the bottom of the container to make space for the shadow
+  width: '50%',
+  marginTop: '20%', 
+  marginBottom: '10%',
+  aspectRatio: 1,
 },
-container: {
-  flex: 1,
-  alignItems: 'center',
-  justifyContent: 'center',
+
+spriteText: {
+  color: 'white',
+  fontFamily: 'AnotherCustomFont',
+  alignSelf: 'center',
+  fontSize: 40,
 },
-button2: {
-  backgroundColor: '#fff', // Customize the button background color here
-  paddingVertical: 10,
-  paddingHorizontal: 20,
-  borderRadius: 8,
-  marginTop: 10,
+
+playStopButton: {
+  alignSelf: 'center',
 },
-buttonText: {
-  fontSize: 18,
-  color: '#000', // Customize the button text color here
-},
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -590,61 +1592,68 @@ video: {
 
 // for levels page 
 
-levelsWriting: {
-  color: '#FFFFFF',
-  fontFamily: 'AnotherCustomFont',
-  fontSize: 170,
-  alignSelf: 'center',
-  marginTop: 80, 
-  marginBottom: -100,
+
+
+  cont: {
+    flex: 1,
+  backgroundColor: "black",
+  justifyContent: 'center',
+  },
   
-},
+  levelsWrapper1:{
+    width: '100%',
+    height: '33.33%', // Change the height to a percentage of the total height
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: '10%',
 
-level1: {
-  width: 300,
-    alignSelf: 'center',
-    marginBottom: -100,
-    
-
-},
-
-easy: {
-  width: '250%',
-  aspectRatio: 1,
-  alignSelf: 'center',
-  marginBottom: -1080,
   },
 
-  level2: {
-    width: 300,
-      alignSelf: 'center',
-      marginBottom: -170,
-  
+  levelsWrapper2:{
+    width: '100%',
+    height: '33.33%', // Change the height to a percentage of the total height
+    alignItems: 'center',
+    justifyContent: 'center',
+
   },
 
-  tough: {
-    width: '250%',
-    aspectRatio: 1,
-    alignSelf: 'center',
-    marginBottom: -1040,
-    },
+  levelsWrapper3:{
+    width: '100%',
+  height: '33.33%', // Change the height to a percentage of the total height
+alignItems: 'center',
+justifyContent: 'center',
 
-    smash: {
-      width: '390%',
-      aspectRatio: 1,
-      alignSelf: 'center',
-      marginTop: -200,
-      marginBottom: -1400,
+  },
+
+
+
+
+  levelsImage1: {
+    width: '85%',
+  height: '100%',
+  resizeMode: 'contain',
     
-      },
+  },
+  levelsImage2: {
+    width: '100%',
+    height: '110%',
+    resizeMode: 'contain',
+    
+  
+    
+  },
+  levelsImage3: {
+    width: '110%',
+  height: '100%',
+  resizeMode: 'contain',
+  marginBottom: '10%'
+    
+    
+  },
 
-      level3: {
-        width: 350,
-          alignSelf: 'center',
-         
-          
-      
-      },
+
+
+     
 
 
       

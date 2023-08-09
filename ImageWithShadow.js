@@ -1,20 +1,16 @@
 import React from 'react';
-import {Image, StyleSheet } from 'react-native';
+import { Image, View } from 'react-native';
 import { Shadow } from 'react-native-shadow-2';
 
 const ImageWithShadow = ({ imageSource, customStyles }) => {
   return (
-    <Shadow startColor="#FFFF" distance={20}>
-      <Image style={[styles.imageStyles, customStyles]} source={imageSource} />
-    </Shadow>
+    <View style={{ width: '100%' }}>
+      <Shadow startColor="#FFFF" distance={20}>
+        <Image style={[customStyles]} source={imageSource} />
+      </Shadow>
+    </View>
   );
 };
-
-const styles = StyleSheet.create({
-  imageStyles: {
-    
-  },
-});
 
 export default ImageWithShadow;
 

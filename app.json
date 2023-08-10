@@ -7,14 +7,11 @@
     "userInterfaceStyle": "light",
     "assetBundlePatterns": ["assets/*"],
     "android": {
+      "versionCode": 2,
       "config": {
         "googleMobileAdsAppId": "ca-app-pub-4523446730560209~4507376866"
       },
       "package": "com.tgpeted.test"
-    },
-    "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "2"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -26,5 +23,3 @@
     }
   }
 }
-
-

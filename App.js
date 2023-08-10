@@ -1,5 +1,5 @@
-import { StyleSheet, Image, Text, View, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import { StyleSheet, Image, Text, View, ScrollView, TouchableOpacity, SafeAreaView, Dimensions } from 'react-native';
+import React, { useEffect, useState, useRef } from 'react';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import * as Font from 'expo-font';
@@ -9,7 +9,8 @@ import { Audio } from 'expo-av';
 import { Video, ResizeMode } from 'expo-av';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomCheckBox from './CustomCheckBox';
-import { AdMobBanner } from 'expo-ads-admob';
+import { AdMobBanner, AdMobInterstitial } from 'expo-ads-admob';
+
 
 
 
@@ -95,6 +96,10 @@ const Disclaimer = ({ navigation }) => {
     return null; // or you can return a loading spinner if you have one
   }
 
+  const screenWidth = Dimensions.get('window').width;
+
+  const bannerSize = screenWidth >= 468 ? "fullBanner" : "banner";
+
   return (
     <View style={styles.scrollContainerDis} >
       <ScrollView style={styles.termsScrollView} nestedScrollEnabled={true}>
@@ -153,6 +158,13 @@ const Disclaimer = ({ navigation }) => {
       <View style={styles.button2}><TouchableOpacity style={styles.button1} onPress={handleButtonPress}>
         <Image style={styles.button} source={require('./assets/donotpress.jpg')} />
       </TouchableOpacity></View>
+      <SafeAreaView style={styles.adContainer}>
+        <View style={styles.adBanner}><AdMobBanner style={styles.adComp}
+          bannerSize={bannerSize}
+          adUnitID="ca-app-pub-3940256099942544/6300978111" // Test ad unit ID
+          onDidFailToReceiveAdWithError={error => console.error(error)}
+        /></View>
+      </SafeAreaView>
     </View>
   );
 };
@@ -204,8 +216,11 @@ const HomeScreen = () => {
   const handleButtonPress2 = () => {
     navigation.navigate('Levels');
   };
+  const screenWidth = Dimensions.get('window').width;
+
+  const bannerSize = screenWidth >= 468 ? "fullBanner" : "banner";
   
-  return (
+                     return (
     <View style={styles.container2}>
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <TouchableOpacity onPress={handleButtonPress} style={styles.imageWrapper2}>
@@ -220,18 +235,24 @@ const HomeScreen = () => {
           <Image style={styles.homeImage3} source={require('./assets/levels1.png')}  resizeMode="contain"/>
         </TouchableOpacity>
       </ScrollView>
-      <SafeAreaView>
-        <AdMobBanner
-          bannerSize="fullBanner"
+      <SafeAreaView style={styles.adContainer}>
+        <View style={styles.adBanner}><AdMobBanner style={styles.adComp}
+          bannerSize={bannerSize}
           adUnitID="ca-app-pub-3940256099942544/6300978111" // Test ad unit ID
           onDidFailToReceiveAdWithError={error => console.error(error)}
-        />
+        /></View>
       </SafeAreaView>
     </View>
   );
 };
 
 const Instructions = () => {
+  
+  
+  const screenWidth = Dimensions.get('window').width;
+  const bannerSize = screenWidth >= 468 ? "fullBanner" : "banner";
+
+  
  
   return (
      <View style={styles.instCont}>
@@ -255,6 +276,13 @@ const Instructions = () => {
         <Text style={styles.pt4}>7) 8 1-2, left-hook, right-hook, left-hook-to-the-body, right-hook-to-the-body, left-hook.</Text>
         <Text style={styles.pt4}>8) 8 1-2, left-hook, right-hook, left-hook-to-the-body, right-hook-to-the-body, left-hook, right-hook</Text>
         </ScrollView>
+        <SafeAreaView style={styles.adContainer}>
+        <View style={styles.adBanner}><AdMobBanner style={styles.adComp}
+          bannerSize={bannerSize}
+          adUnitID="ca-app-pub-3940256099942544/6300978111" // Test ad unit ID
+          onDidFailToReceiveAdWithError={error => console.error(error)}
+        /></View>
+      </SafeAreaView>
     </View>
   
 
@@ -272,6 +300,9 @@ const Instructions = () => {
   const handleButtonPress3 = () => {
     navigation.navigate('Lola');
   }
+
+  const screenWidth = Dimensions.get('window').width;
+  const bannerSize = screenWidth >= 468 ? "fullBanner" : "banner";
   return (
     <View style={styles.artCont}>
       <ScrollView>
@@ -298,6 +329,13 @@ const Instructions = () => {
           />
         </TouchableOpacity>
       </ScrollView>
+      <SafeAreaView style={styles.adContainer}>
+        <View style={styles.adBanner}><AdMobBanner style={styles.adComp}
+          bannerSize={bannerSize}
+          adUnitID="ca-app-pub-3940256099942544/6300978111" // Test ad unit ID
+          onDidFailToReceiveAdWithError={error => console.error(error)}
+        /></View>
+      </SafeAreaView>
     </View>
        
   
@@ -309,6 +347,7 @@ const Instructions = () => {
   
     const Levels = () => {
       const navigation = useNavigation();
+   
     
       const handleButtonPress1 = () => {
         navigation.navigate('Easy');
@@ -319,7 +358,8 @@ const Instructions = () => {
       const handleButtonPress3 = () => {
         navigation.navigate('Smash');
       }
-    
+      const screenWidth = Dimensions.get('window').width;
+      const bannerSize = screenWidth >= 468 ? "fullBanner" : "banner";
       return (
         <View style={styles.cont}>
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
@@ -335,6 +375,13 @@ const Instructions = () => {
             <Image style={styles.levelsImage3} source={require('./assets/smash.png')}  resizeMode="contain"/>
           </TouchableOpacity>
         </ScrollView>
+        <SafeAreaView style={styles.adContainer}>
+        <View style={styles.adBanner}><AdMobBanner style={styles.adComp}
+          bannerSize={bannerSize}
+          adUnitID="ca-app-pub-3940256099942544/6300978111" // Test ad unit ID
+          onDidFailToReceiveAdWithError={error => console.error(error)}
+        /></View>
+      </SafeAreaView>
       </View>
       );
     };
@@ -344,6 +391,8 @@ const Instructions = () => {
       const thirdAudioFile = require('./assets/Melodic_deep_house.mp3'); 
       const fourthAudioFile = require('./assets/Piano_House.mp3'); 
       const fithAudioFile = require('./assets/Driving_Techno.mp3'); 
+      const screenWidth = Dimensions.get('window').width;
+      const bannerSize = screenWidth >= 468 ? "fullBanner" : "banner";
     
       const sound = React.useRef(new Audio.Sound());
       const sound2 = React.useRef(new Audio.Sound());
@@ -356,6 +405,7 @@ const Instructions = () => {
       const [isThirdPlaying, setIsThirdPlaying] = useState(false);
       const [isFourthPlaying, setIsFourthPlaying] = useState(false);
       const [isFithPlaying, setIsFithPlaying] = useState(false);
+      const [isAdLoaded, setIsAdLoaded] = useState(false); 
     
       useEffect(() => {
         // Set up the audio session configuration
@@ -366,6 +416,9 @@ const Instructions = () => {
           shouldDuckAndroid: true,
           playThroughEarpieceAndroid: false,
         });
+        AdMobInterstitial.setAdUnitID('ca-app-pub-3940256099942544/1033173712'); // Replace with your interstitial ad unit ID
+
+        
     
         return () => {
           // Unload the audio when the component unmounts
@@ -383,13 +436,32 @@ const Instructions = () => {
             await sound.current.stopAsync();
             setIsPlaying(false);
           } else {
-            // Check if the sound is already loaded
             const status = await sound.current.getStatusAsync();
             if (!status.isLoaded) {
               await sound.current.loadAsync(audioFile);
             }
             await sound.current.playAsync();
             setIsPlaying(true);
+    
+            sound.current.setOnPlaybackStatusUpdate(async (status) => {
+              if (status.didJustFinish) {
+                if (!isAdLoaded) { 
+                  try {
+                    await AdMobInterstitial.requestAdAsync({ servePersonalizedAds: false });
+                    setIsAdLoaded(true);
+                  } catch (error) {
+                    console.log('Error requesting interstitial ad:', error);
+                  }
+                }
+                try {
+                  await AdMobInterstitial.showAdAsync();
+                  AdMobInterstitial.dismissAdAsync();
+                  setIsAdLoaded(false);
+                } catch (error) {
+                  console.log('Error showing interstitial ad:', error);
+                }
+              }
+            });
           }
         } catch (error) {
           console.log('Error in Playing Audio:', error);
@@ -402,69 +474,145 @@ const Instructions = () => {
             await sound2.current.stopAsync();
             setIsSecondPlaying(false);
           } else {
-            // Check if the sound is already loaded
             const status = await sound2.current.getStatusAsync();
             if (!status.isLoaded) {
               await sound2.current.loadAsync(secondAudioFile);
             }
             await sound2.current.playAsync();
             setIsSecondPlaying(true);
+    
+            sound2.current.setOnPlaybackStatusUpdate(async (status) => {
+              if (status.didJustFinish) {
+                if (!isAdLoaded) {
+                  try {
+                    await AdMobInterstitial.requestAdAsync({ servePersonalizedAds: false });
+                    setIsAdLoaded(true);
+                  } catch (error) {
+                    console.log('Error requesting interstitial ad:', error);
+                  }
+                }
+                try {
+                  await AdMobInterstitial.showAdAsync();
+                  AdMobInterstitial.dismissAdAsync();
+                  setIsAdLoaded(false);
+                } catch (error) {
+                  console.log('Error showing interstitial ad:', error);
+                }
+              }
+            });
           }
         } catch (error) {
           console.log('Error in Playing Second Audio:', error);
         }
       };
-
+    
       const handleThirdAudioPlay = async () => {
         try {
           if (isThirdPlaying) {
             await sound3.current.stopAsync();
             setIsThirdPlaying(false);
           } else {
-            // Check if the sound is already loaded
             const status = await sound3.current.getStatusAsync();
             if (!status.isLoaded) {
               await sound3.current.loadAsync(thirdAudioFile);
             }
             await sound3.current.playAsync();
             setIsThirdPlaying(true);
+    
+            sound3.current.setOnPlaybackStatusUpdate(async (status) => {
+              if (status.didJustFinish) {
+                if (!isAdLoaded) {
+                  try {
+                    await AdMobInterstitial.requestAdAsync({ servePersonalizedAds: false });
+                    setIsAdLoaded(true);
+                  } catch (error) {
+                    console.log('Error requesting interstitial ad:', error);
+                  }
+                }
+                try {
+                  await AdMobInterstitial.showAdAsync();
+                  AdMobInterstitial.dismissAdAsync();
+                  setIsAdLoaded(false);
+                } catch (error) {
+                  console.log('Error showing interstitial ad:', error);
+                }
+              }
+            });
           }
         } catch (error) {
           console.log('Error in Playing Second Audio:', error);
         }
       };
-
-      const handleFourthAudioPlay = async () => {
+    
+      const handleFourthAudioPlay = async () => { 
         try {
           if (isFourthPlaying) {
             await sound4.current.stopAsync();
             setIsFourthPlaying(false);
           } else {
-            // Check if the sound is already loaded
             const status = await sound4.current.getStatusAsync();
             if (!status.isLoaded) {
               await sound4.current.loadAsync(fourthAudioFile);
             }
             await sound4.current.playAsync();
             setIsFourthPlaying(true);
+    
+            sound4.current.setOnPlaybackStatusUpdate(async (status) => {
+              if (status.didJustFinish) {
+                if (!isAdLoaded) {
+                  try {
+                    await AdMobInterstitial.requestAdAsync({ servePersonalizedAds: false });
+                    setIsAdLoaded(true);
+                  } catch (error) {
+                    console.log('Error requesting interstitial ad:', error);
+                  }
+                }
+                try {
+                  await AdMobInterstitial.showAdAsync();
+                  AdMobInterstitial.dismissAdAsync();
+                  setIsAdLoaded(false);
+                } catch (error) {
+                  console.log('Error showing interstitial ad:', error);
+                }
+              }
+            });
           }
         } catch (error) {
           console.log('Error in Playing Second Audio:', error);
         }
       };
-      const handleFithAudioPlay = async () => {
+      const handleFithAudioPlay = async () => { 
         try {
           if (isFithPlaying) {
             await sound5.current.stopAsync();
             setIsFithPlaying(false);
           } else {
-            // Check if the sound is already loaded
             const status = await sound5.current.getStatusAsync();
             if (!status.isLoaded) {
               await sound5.current.loadAsync(fithAudioFile);
             }
             await sound5.current.playAsync();
             setIsFithPlaying(true);
+    
+            sound5.current.setOnPlaybackStatusUpdate(async (status) => {
+              if (status.didJustFinish) {
+                if (!isAdLoaded) {
+                  try {
+                    await AdMobInterstitial.requestAdAsync({ servePersonalizedAds: false });
+                    setIsAdLoaded(true);
+                  } catch (error) {
+                    console.log('Error requesting interstitial ad:', error);
+                  }
+                }
+                try {
+                  await AdMobInterstitial.showAdAsync();
+                  AdMobInterstitial.dismissAdAsync();
+                  setIsAdLoaded(false);
+                } catch (error) {
+                  console.log('Error showing interstitial ad:', error);
+                }
+              }
+            });
           }
         } catch (error) {
           console.log('Error in Playing Second Audio:', error);
@@ -561,18 +709,28 @@ const Instructions = () => {
          
           
           </ScrollView>
+          <SafeAreaView style={styles.adContainer}>
+        <View style={styles.adBanner}><AdMobBanner style={styles.adComp}
+          bannerSize={bannerSize}
+          adUnitID="ca-app-pub-3940256099942544/6300978111" // Test ad unit ID
+          onDidFailToReceiveAdWithError={error => console.error(error)}
+        /></View>
+      </SafeAreaView>
         </LinearGradient>
       );
     };
 
 const DayG = () => {
   const audioFile = require('./assets/hhdpt.mp3');
+  const screenWidth = Dimensions.get('window').width;
+  const bannerSize = screenWidth >= 468 ? "fullBanner" : "banner";
    
 
   const sound = React.useRef(new Audio.Sound());
  
 
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isAdLoaded, setIsAdLoaded] = useState(false); 
   
 
   useEffect(() => {
@@ -584,6 +742,9 @@ const DayG = () => {
       shouldDuckAndroid: true,
       playThroughEarpieceAndroid: false,
     });
+
+    AdMobInterstitial.setAdUnitID('ca-app-pub-3940256099942544/1033173712'); // Replace with your interstitial ad unit ID
+    
 
     return () => {
       // Unload the audio when the component unmounts
@@ -598,13 +759,32 @@ const DayG = () => {
         await sound.current.stopAsync();
         setIsPlaying(false);
       } else {
-        // Check if the sound is already loaded
         const status = await sound.current.getStatusAsync();
         if (!status.isLoaded) {
           await sound.current.loadAsync(audioFile);
         }
         await sound.current.playAsync();
         setIsPlaying(true);
+
+        sound.current.setOnPlaybackStatusUpdate(async (status) => {
+          if (status.didJustFinish) {
+            if (!isAdLoaded) { 
+              try {
+                await AdMobInterstitial.requestAdAsync({ servePersonalizedAds: false });
+                setIsAdLoaded(true);
+              } catch (error) {
+                console.log('Error requesting interstitial ad:', error);
+              }
+            }
+            try {
+              await AdMobInterstitial.showAdAsync();
+              AdMobInterstitial.dismissAdAsync();
+              setIsAdLoaded(false);
+            } catch (error) {
+              console.log('Error showing interstitial ad:', error);
+            }
+          }
+        });
       }
     } catch (error) {
       console.log('Error in Playing Audio:', error);
@@ -649,6 +829,13 @@ const DayG = () => {
      
       
       </ScrollView>
+      <SafeAreaView style={styles.adContainer}>
+        <View style={styles.adBanner}><AdMobBanner style={styles.adComp}
+          bannerSize={bannerSize}
+          adUnitID="ca-app-pub-3940256099942544/6300978111" // Test ad unit ID
+          onDidFailToReceiveAdWithError={error => console.error(error)}
+        /></View>
+      </SafeAreaView>
     </LinearGradient>
   );
 };
@@ -657,6 +844,8 @@ const Lola = () => {
   const audioFile = require('./assets/Latin_Pop_Easy.mp3');
   const secondAudioFile = require('./assets/Tropical_House.mp3'); 
   const thirdAudioFile = require('./assets/Latin_Hard.mp3'); 
+  const screenWidth = Dimensions.get('window').width;
+  const bannerSize = screenWidth >= 468 ? "fullBanner" : "banner";
   
 
   const sound = React.useRef(new Audio.Sound());
@@ -667,6 +856,7 @@ const Lola = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isSecondPlaying, setIsSecondPlaying] = useState(false);
   const [isThirdPlaying, setIsThirdPlaying] = useState(false);
+  const [isAdLoaded, setIsAdLoaded] = useState(false); 
   
 
   useEffect(() => {
@@ -678,6 +868,9 @@ const Lola = () => {
       shouldDuckAndroid: true,
       playThroughEarpieceAndroid: false,
     });
+
+    AdMobInterstitial.setAdUnitID('ca-app-pub-3940256099942544/1033173712'); // Replace with your interstitial ad unit ID
+    
 
     return () => {
       // Unload the audio when the component unmounts
@@ -693,13 +886,32 @@ const Lola = () => {
         await sound.current.stopAsync();
         setIsPlaying(false);
       } else {
-        // Check if the sound is already loaded
         const status = await sound.current.getStatusAsync();
         if (!status.isLoaded) {
           await sound.current.loadAsync(audioFile);
         }
         await sound.current.playAsync();
         setIsPlaying(true);
+
+        sound.current.setOnPlaybackStatusUpdate(async (status) => {
+          if (status.didJustFinish) {
+            if (!isAdLoaded) { 
+              try {
+                await AdMobInterstitial.requestAdAsync({ servePersonalizedAds: false });
+                setIsAdLoaded(true);
+              } catch (error) {
+                console.log('Error requesting interstitial ad:', error);
+              }
+            }
+            try {
+              await AdMobInterstitial.showAdAsync();
+              AdMobInterstitial.dismissAdAsync();
+              setIsAdLoaded(false);
+            } catch (error) {
+              console.log('Error showing interstitial ad:', error);
+            }
+          }
+        });
       }
     } catch (error) {
       console.log('Error in Playing Audio:', error);
@@ -712,13 +924,32 @@ const Lola = () => {
         await sound2.current.stopAsync();
         setIsSecondPlaying(false);
       } else {
-        // Check if the sound is already loaded
         const status = await sound2.current.getStatusAsync();
         if (!status.isLoaded) {
           await sound2.current.loadAsync(secondAudioFile);
         }
         await sound2.current.playAsync();
         setIsSecondPlaying(true);
+
+        sound2.current.setOnPlaybackStatusUpdate(async (status) => {
+          if (status.didJustFinish) {
+            if (!isAdLoaded) {
+              try {
+                await AdMobInterstitial.requestAdAsync({ servePersonalizedAds: false });
+                setIsAdLoaded(true);
+              } catch (error) {
+                console.log('Error requesting interstitial ad:', error);
+              }
+            }
+            try {
+              await AdMobInterstitial.showAdAsync();
+              AdMobInterstitial.dismissAdAsync();
+              setIsAdLoaded(false);
+            } catch (error) {
+              console.log('Error showing interstitial ad:', error);
+            }
+          }
+        });
       }
     } catch (error) {
       console.log('Error in Playing Second Audio:', error);
@@ -731,13 +962,32 @@ const Lola = () => {
         await sound3.current.stopAsync();
         setIsThirdPlaying(false);
       } else {
-        // Check if the sound is already loaded
         const status = await sound3.current.getStatusAsync();
         if (!status.isLoaded) {
           await sound3.current.loadAsync(thirdAudioFile);
         }
         await sound3.current.playAsync();
         setIsThirdPlaying(true);
+
+        sound3.current.setOnPlaybackStatusUpdate(async (status) => {
+          if (status.didJustFinish) {
+            if (!isAdLoaded) {
+              try {
+                await AdMobInterstitial.requestAdAsync({ servePersonalizedAds: false });
+                setIsAdLoaded(true);
+              } catch (error) {
+                console.log('Error requesting interstitial ad:', error);
+              }
+            }
+            try {
+              await AdMobInterstitial.showAdAsync();
+              AdMobInterstitial.dismissAdAsync();
+              setIsAdLoaded(false);
+            } catch (error) {
+              console.log('Error showing interstitial ad:', error);
+            }
+          }
+        });
       }
     } catch (error) {
       console.log('Error in Playing Second Audio:', error);
@@ -814,6 +1064,13 @@ const Lola = () => {
      
       
       </ScrollView>
+      <SafeAreaView style={styles.adContainer}>
+        <View style={styles.adBanner}><AdMobBanner style={styles.adComp}
+          bannerSize={bannerSize}
+          adUnitID="ca-app-pub-3940256099942544/6300978111" // Test ad unit ID
+          onDidFailToReceiveAdWithError={error => console.error(error)}
+        /></View>
+      </SafeAreaView>
     </LinearGradient>
   );
 };
@@ -822,6 +1079,8 @@ const Easy = () => {
   const audioFile = require('./assets/Latin_Pop_Easy.mp3');
   const secondAudioFile = require('./assets/Melodic_deep_house.mp3'); 
   const thirdAudioFile = require('./assets/hhdpt.mp3'); 
+  const screenWidth = Dimensions.get('window').width;
+  const bannerSize = screenWidth >= 468 ? "fullBanner" : "banner";
 
   
   
@@ -834,6 +1093,7 @@ const Easy = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isSecondPlaying, setIsSecondPlaying] = useState(false);
   const [isThirdPlaying, setIsThirdPlaying] = useState(false);
+  const [isAdLoaded, setIsAdLoaded] = useState(false); 
   
 
   useEffect(() => {
@@ -845,6 +1105,9 @@ const Easy = () => {
       shouldDuckAndroid: true,
       playThroughEarpieceAndroid: false,
     });
+
+    AdMobInterstitial.setAdUnitID('ca-app-pub-3940256099942544/1033173712'); // Replace with your interstitial ad unit ID
+    
 
     return () => {
       // Unload the audio when the component unmounts
@@ -860,13 +1123,32 @@ const Easy = () => {
         await sound.current.stopAsync();
         setIsPlaying(false);
       } else {
-        // Check if the sound is already loaded
         const status = await sound.current.getStatusAsync();
         if (!status.isLoaded) {
           await sound.current.loadAsync(audioFile);
         }
         await sound.current.playAsync();
         setIsPlaying(true);
+
+        sound.current.setOnPlaybackStatusUpdate(async (status) => {
+          if (status.didJustFinish) {
+            if (!isAdLoaded) { 
+              try {
+                await AdMobInterstitial.requestAdAsync({ servePersonalizedAds: false });
+                setIsAdLoaded(true);
+              } catch (error) {
+                console.log('Error requesting interstitial ad:', error);
+              }
+            }
+            try {
+              await AdMobInterstitial.showAdAsync();
+              AdMobInterstitial.dismissAdAsync();
+              setIsAdLoaded(false);
+            } catch (error) {
+              console.log('Error showing interstitial ad:', error);
+            }
+          }
+        });
       }
     } catch (error) {
       console.log('Error in Playing Audio:', error);
@@ -879,13 +1161,32 @@ const Easy = () => {
         await sound2.current.stopAsync();
         setIsSecondPlaying(false);
       } else {
-        // Check if the sound is already loaded
         const status = await sound2.current.getStatusAsync();
         if (!status.isLoaded) {
           await sound2.current.loadAsync(secondAudioFile);
         }
         await sound2.current.playAsync();
         setIsSecondPlaying(true);
+
+        sound2.current.setOnPlaybackStatusUpdate(async (status) => {
+          if (status.didJustFinish) {
+            if (!isAdLoaded) {
+              try {
+                await AdMobInterstitial.requestAdAsync({ servePersonalizedAds: false });
+                setIsAdLoaded(true);
+              } catch (error) {
+                console.log('Error requesting interstitial ad:', error);
+              }
+            }
+            try {
+              await AdMobInterstitial.showAdAsync();
+              AdMobInterstitial.dismissAdAsync();
+              setIsAdLoaded(false);
+            } catch (error) {
+              console.log('Error showing interstitial ad:', error);
+            }
+          }
+        });
       }
     } catch (error) {
       console.log('Error in Playing Second Audio:', error);
@@ -898,13 +1199,32 @@ const Easy = () => {
         await sound3.current.stopAsync();
         setIsThirdPlaying(false);
       } else {
-        // Check if the sound is already loaded
         const status = await sound3.current.getStatusAsync();
         if (!status.isLoaded) {
           await sound3.current.loadAsync(thirdAudioFile);
         }
         await sound3.current.playAsync();
         setIsThirdPlaying(true);
+
+        sound3.current.setOnPlaybackStatusUpdate(async (status) => {
+          if (status.didJustFinish) {
+            if (!isAdLoaded) {
+              try {
+                await AdMobInterstitial.requestAdAsync({ servePersonalizedAds: false });
+                setIsAdLoaded(true);
+              } catch (error) {
+                console.log('Error requesting interstitial ad:', error);
+              }
+            }
+            try {
+              await AdMobInterstitial.showAdAsync();
+              AdMobInterstitial.dismissAdAsync();
+              setIsAdLoaded(false);
+            } catch (error) {
+              console.log('Error showing interstitial ad:', error);
+            }
+          }
+        });
       }
     } catch (error) {
       console.log('Error in Playing Second Audio:', error);
@@ -981,6 +1301,13 @@ const Easy = () => {
      
       
       </ScrollView>
+      <SafeAreaView style={styles.adContainer}>
+        <View style={styles.adBanner}><AdMobBanner style={styles.adComp}
+          bannerSize={bannerSize}
+          adUnitID="ca-app-pub-3940256099942544/6300978111" // Test ad unit ID
+          onDidFailToReceiveAdWithError={error => console.error(error)}
+        /></View>
+      </SafeAreaView>
     </LinearGradient>
   );
 };
@@ -990,6 +1317,9 @@ const Tough = () => {
   const secondAudioFile = require('./assets/DnB1.mp3'); 
   const thirdAudioFile = require('./assets/DnB2.mp3'); 
   const fourthAudioFile = require('./assets/Latin_Hard.mp3'); 
+  const screenWidth = Dimensions.get('window').width;
+  const bannerSize = screenWidth >= 468 ? "fullBanner" : "banner";
+ 
   
 
   const sound = React.useRef(new Audio.Sound());
@@ -1002,6 +1332,7 @@ const Tough = () => {
   const [isSecondPlaying, setIsSecondPlaying] = useState(false);
   const [isThirdPlaying, setIsThirdPlaying] = useState(false);
   const [isFourthPlaying, setIsFourthPlaying] = useState(false);
+  const [isAdLoaded, setIsAdLoaded] = useState(false); 
  
 
   useEffect(() => {
@@ -1013,6 +1344,10 @@ const Tough = () => {
       shouldDuckAndroid: true,
       playThroughEarpieceAndroid: false,
     });
+
+    // Set the ad unit ID for the interstitial ad
+    AdMobInterstitial.setAdUnitID('ca-app-pub-3940256099942544/1033173712'); // Replace with your interstitial ad unit ID
+   
 
     return () => {
       // Unload the audio when the component unmounts
@@ -1030,13 +1365,32 @@ const Tough = () => {
         await sound.current.stopAsync();
         setIsPlaying(false);
       } else {
-        // Check if the sound is already loaded
         const status = await sound.current.getStatusAsync();
         if (!status.isLoaded) {
           await sound.current.loadAsync(audioFile);
         }
         await sound.current.playAsync();
         setIsPlaying(true);
+
+        sound.current.setOnPlaybackStatusUpdate(async (status) => {
+          if (status.didJustFinish) {
+            if (!isAdLoaded) { 
+              try {
+                await AdMobInterstitial.requestAdAsync({ servePersonalizedAds: false });
+                setIsAdLoaded(true);
+              } catch (error) {
+                console.log('Error requesting interstitial ad:', error);
+              }
+            }
+            try {
+              await AdMobInterstitial.showAdAsync();
+              AdMobInterstitial.dismissAdAsync();
+              setIsAdLoaded(false);
+            } catch (error) {
+              console.log('Error showing interstitial ad:', error);
+            }
+          }
+        });
       }
     } catch (error) {
       console.log('Error in Playing Audio:', error);
@@ -1049,13 +1403,32 @@ const Tough = () => {
         await sound2.current.stopAsync();
         setIsSecondPlaying(false);
       } else {
-        // Check if the sound is already loaded
         const status = await sound2.current.getStatusAsync();
         if (!status.isLoaded) {
           await sound2.current.loadAsync(secondAudioFile);
         }
         await sound2.current.playAsync();
         setIsSecondPlaying(true);
+
+        sound2.current.setOnPlaybackStatusUpdate(async (status) => {
+          if (status.didJustFinish) {
+            if (!isAdLoaded) {
+              try {
+                await AdMobInterstitial.requestAdAsync({ servePersonalizedAds: false });
+                setIsAdLoaded(true);
+              } catch (error) {
+                console.log('Error requesting interstitial ad:', error);
+              }
+            }
+            try {
+              await AdMobInterstitial.showAdAsync();
+              AdMobInterstitial.dismissAdAsync();
+              setIsAdLoaded(false);
+            } catch (error) {
+              console.log('Error showing interstitial ad:', error);
+            }
+          }
+        });
       }
     } catch (error) {
       console.log('Error in Playing Second Audio:', error);
@@ -1068,38 +1441,75 @@ const Tough = () => {
         await sound3.current.stopAsync();
         setIsThirdPlaying(false);
       } else {
-        // Check if the sound is already loaded
         const status = await sound3.current.getStatusAsync();
         if (!status.isLoaded) {
           await sound3.current.loadAsync(thirdAudioFile);
         }
         await sound3.current.playAsync();
         setIsThirdPlaying(true);
+
+        sound3.current.setOnPlaybackStatusUpdate(async (status) => {
+          if (status.didJustFinish) {
+            if (!isAdLoaded) {
+              try {
+                await AdMobInterstitial.requestAdAsync({ servePersonalizedAds: false });
+                setIsAdLoaded(true);
+              } catch (error) {
+                console.log('Error requesting interstitial ad:', error);
+              }
+            }
+            try {
+              await AdMobInterstitial.showAdAsync();
+              AdMobInterstitial.dismissAdAsync();
+              setIsAdLoaded(false);
+            } catch (error) {
+              console.log('Error showing interstitial ad:', error);
+            }
+          }
+        });
       }
     } catch (error) {
       console.log('Error in Playing Second Audio:', error);
     }
   };
 
-  const handleFourthAudioPlay = async () => {
+  const handleFourthAudioPlay = async () => { 
     try {
       if (isFourthPlaying) {
         await sound4.current.stopAsync();
         setIsFourthPlaying(false);
       } else {
-        // Check if the sound is already loaded
         const status = await sound4.current.getStatusAsync();
         if (!status.isLoaded) {
           await sound4.current.loadAsync(fourthAudioFile);
         }
         await sound4.current.playAsync();
         setIsFourthPlaying(true);
+
+        sound4.current.setOnPlaybackStatusUpdate(async (status) => {
+          if (status.didJustFinish) {
+            if (!isAdLoaded) {
+              try {
+                await AdMobInterstitial.requestAdAsync({ servePersonalizedAds: false });
+                setIsAdLoaded(true);
+              } catch (error) {
+                console.log('Error requesting interstitial ad:', error);
+              }
+            }
+            try {
+              await AdMobInterstitial.showAdAsync();
+              AdMobInterstitial.dismissAdAsync();
+              setIsAdLoaded(false);
+            } catch (error) {
+              console.log('Error showing interstitial ad:', error);
+            }
+          }
+        });
       }
     } catch (error) {
       console.log('Error in Playing Second Audio:', error);
     }
   };
- 
 
   return (
     <LinearGradient colors={['#99D98B', '#99D98B', '#99D98B', '#DF1932']} style={styles.gradientContainer}>
@@ -1177,28 +1587,37 @@ const Tough = () => {
 
       
       </ScrollView>
+      <SafeAreaView style={styles.adContainer}>
+        <View style={styles.adBanner}><AdMobBanner style={styles.adComp}
+          bannerSize={bannerSize}
+          adUnitID="ca-app-pub-3940256099942544/6300978111" // Test ad unit ID
+          onDidFailToReceiveAdWithError={error => console.error(error)}
+        /></View>
+      </SafeAreaView>
     </LinearGradient>
   );
 };
 
+
+
+
+
+
+
 const Smash = () => {
   const audioFile = require('./assets/Piano_House.mp3');
-  const secondAudioFile = require('./assets/Driving_Techno.mp3'); 
-  
-  
+  const secondAudioFile = require('./assets/Driving_Techno.mp3');
+  const screenWidth = Dimensions.get('window').width;
+  const bannerSize = screenWidth >= 468 ? "fullBanner" : "banner";
 
-  const sound = React.useRef(new Audio.Sound());
-  const sound2 = React.useRef(new Audio.Sound());
-  
-
+  const sound = useRef(new Audio.Sound());
+  const sound2 = useRef(new Audio.Sound());
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [isSecondPlaying, setIsSecondPlaying] = useState(false);
-  
-  
+  const [isAdLoaded, setIsAdLoaded] = useState(false); // this bit
 
   useEffect(() => {
-    // Set up the audio session configuration
     Audio.setAudioModeAsync({
       allowsRecordingIOS: false,
       staysActiveInBackground: true,
@@ -1207,11 +1626,11 @@ const Smash = () => {
       playThroughEarpieceAndroid: false,
     });
 
+    AdMobInterstitial.setAdUnitID('ca-app-pub-3940256099942544/1033173712');
+
     return () => {
-      // Unload the audio when the component unmounts
       sound.current.unloadAsync();
       sound2.current.unloadAsync();
-      
     };
   }, []);
 
@@ -1221,13 +1640,32 @@ const Smash = () => {
         await sound.current.stopAsync();
         setIsPlaying(false);
       } else {
-        // Check if the sound is already loaded
         const status = await sound.current.getStatusAsync();
         if (!status.isLoaded) {
           await sound.current.loadAsync(audioFile);
         }
         await sound.current.playAsync();
         setIsPlaying(true);
+
+        sound.current.setOnPlaybackStatusUpdate(async (status) => {
+          if (status.didJustFinish) {
+            if (!isAdLoaded) { 
+              try {
+                await AdMobInterstitial.requestAdAsync({ servePersonalizedAds: false });
+                setIsAdLoaded(true);
+              } catch (error) {
+                console.log('Error requesting interstitial ad:', error);
+              }
+            }
+            try {
+              await AdMobInterstitial.showAdAsync();
+              AdMobInterstitial.dismissAdAsync();
+              setIsAdLoaded(false);
+            } catch (error) {
+              console.log('Error showing interstitial ad:', error);
+            }
+          }
+        });
       }
     } catch (error) {
       console.log('Error in Playing Audio:', error);
@@ -1240,13 +1678,32 @@ const Smash = () => {
         await sound2.current.stopAsync();
         setIsSecondPlaying(false);
       } else {
-        // Check if the sound is already loaded
         const status = await sound2.current.getStatusAsync();
         if (!status.isLoaded) {
           await sound2.current.loadAsync(secondAudioFile);
         }
         await sound2.current.playAsync();
         setIsSecondPlaying(true);
+
+        sound2.current.setOnPlaybackStatusUpdate(async (status) => {
+          if (status.didJustFinish) {
+            if (!isAdLoaded) {
+              try {
+                await AdMobInterstitial.requestAdAsync({ servePersonalizedAds: false });
+                setIsAdLoaded(true);
+              } catch (error) {
+                console.log('Error requesting interstitial ad:', error);
+              }
+            }
+            try {
+              await AdMobInterstitial.showAdAsync();
+              AdMobInterstitial.dismissAdAsync();
+              setIsAdLoaded(false);
+            } catch (error) {
+              console.log('Error showing interstitial ad:', error);
+            }
+          }
+        });
       }
     } catch (error) {
       console.log('Error in Playing Second Audio:', error);
@@ -1255,8 +1712,11 @@ const Smash = () => {
 
 
 
-  
-  
+
+
+
+
+
 
   return (
     <LinearGradient colors={['#DF1932', '#000000' ]} style={styles.gradientContainer}>
@@ -1298,13 +1758,32 @@ const Smash = () => {
       
       
       
-    
       
-
-
-     
+      
+      
+      
+      
+      
+      
       
       </ScrollView>
+
+
+
+
+
+
+
+
+      <SafeAreaView style={styles.adContainer}>
+        <View style={styles.adBanner}>
+          <AdMobBanner style={styles.adComp}
+            bannerSize={bannerSize}
+            adUnitID="ca-app-pub-3940256099942544/6300978111" // Test ad unit ID
+            onDidFailToReceiveAdWithError={error => console.error(error)}
+          />
+        </View>
+      </SafeAreaView>
     </LinearGradient>
   );
 };
@@ -1385,18 +1864,40 @@ const styles = StyleSheet.create({
   },
  
  
- 
- 
- 
- 
- 
- 
-  // This is all for the home screen where the user has the first options to select instructions artists and levels 
-  container2: {
+ // container for home screen
+container2: {
     flex: 1,
     backgroundColor: "black",
     justifyContent: 'center',
 },
+
+
+
+
+
+
+// styles for the banner ad
+adContainer: {
+  width: '100%', // or set a fixed width
+  DnB1alignSelf: 'center',
+  justifyContent: 'center',
+  
+},
+
+adBanner: {
+  alignSelf: 'center',
+  
+},
+
+  
+  
+  
+  
+  
+ 
+  
+
+
   
 imageWrapper2: {
   width: '100%',
